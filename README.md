@@ -38,3 +38,4 @@ docker-compose up -d --build
 | Python                | 3.10.12     |
 | Scala                 | 2.12.18     |
 | Scala Kafka-Clients Jar| 3.8.0       |
+| Provectuse | v0.7.2 |
