@@ -1,0 +1,43 @@
+services:
+  zookeeper:
+    build: ./container_images/zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./config/zookeeper/zoo.cfg:/zookeeper/conf/zoo.cfg
+      - ./kafka_data/zookeeper:/var/lib/zookeeper
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+  
+  kafka:
+    build: ./container_images/kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "19092:19092"
+    volumes:
+      - ./config/kafka/server.properties:/kafka/config/server.properties
+      - ./kafka_data/kafka:/kafka/logs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.15
+    
+  kafka-ui:
+    build:
+          context: container_images/provectus/.
+          dockerfile: Dockerfile
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./config/provectus/config.yml:/mnt/config.yml:ro
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.16
+
+networks:
+  dahbest:
+    external: true

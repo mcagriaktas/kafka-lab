@@ -1,0 +1,11 @@
+kafka:
+  clusters:
+    - name: cagri_cluster
+      bootstrapServers: kafka:9192
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO

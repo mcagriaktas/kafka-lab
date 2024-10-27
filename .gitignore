@@ -1,0 +1,7 @@
+# Metals, Scala Build, and VS Code directories
+.metals/
+.scala-build/
+.vscode/
+
+# Python bytecode cache
+**/__pycache__/

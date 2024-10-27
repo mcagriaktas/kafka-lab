@@ -1,0 +1,16 @@
+services:
+  redhat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kafka
+    stdin_open: true
+    tty: true   
+    volumes:
+      - ./home/all_logs:/mnt/all_logs
+      - ./home/config:/mnt/config
+    command: /bin/bash
+
+networks:
+  dahbest:
+    external: true
