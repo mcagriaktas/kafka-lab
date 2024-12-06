@@ -120,3 +120,19 @@ docker exec -it kafka1 bash
 2        I'm Cagri
 3        I'm sure, I am, I
 ```
+
+### Grafana Monitoring
+
+#### Add Prometheus as a data source in Grafana:
+
+1. Login to Grafana (localhost:3000)
+2. Click on the hamburger menu icon (☰) in the left sidebar
+3. Go to "Connections" -> "Data sources"
+4. Click "Add data source"
+5. Search and select "Prometheus"
+6. Set the URL to http://prometheus:9090
+7. Click "Save & test" at the bottom
+
+#### Create Dashboard:
+
+![image](https://github.com/user-attachments/assets/7bd8c4c5-8561-4925-9342-34170d8471d5)
