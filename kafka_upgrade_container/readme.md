@@ -27,7 +27,7 @@ This documentation details upgrading Kafka from 3.1.0 to 3.8.0, focusing on main
 ```bash
 services:
   kafka:
-    images: mucagriaktas/kafka-migration-test:v1
+    images: mucagriaktas/kafka-demo-container:v1
     container_name: kafka
     stdin_open: true
     tty: true   
