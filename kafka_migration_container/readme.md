@@ -30,7 +30,7 @@ mkdir /mnt/all_logs
 ### 1. KRaft Kafka Setup (3.8.0)
 
 1. Configure `server.properties` for KRaft mode (`/config/kraft/server.properties`):
-```properties
+```bash
 listeners=PLAINTEXT://:9094,CONTROLLER://:9093
 advertised.listeners=PLAINTEXT://localhost:9094
 log.dirs=/mnt/all_logs/kafka
@@ -47,7 +47,7 @@ log.dirs=/mnt/all_logs/kafka
 ### 2. ZooKeeper Configuration (3.7.2)
 
 Create and configure `zoo.cfg` (`/mnt/apache-zookeeper-3.7.2-bin/conf/zoo.cfg`):
-```properties
+```bash
 tickTime=2000
 dataDir=/mnt/all_logs/zookeeper_data
 clientPort=2181
@@ -58,7 +58,7 @@ syncLimit=5
 ### 3. MirrorMaker 2 Configuration
 
 Create `mm2.properties` (`/mnt/mm2.properties`):
-```properties
+```bash
 # Cluster aliases
 clusters = source, destination
 
