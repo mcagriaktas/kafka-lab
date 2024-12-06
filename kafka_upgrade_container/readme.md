@@ -1,6 +1,8 @@
 # Kafka Upgrade Guide:
 
-1. Upgrade
+This documentation details upgrading Kafka from 3.1.0 to 3.8.0, focusing on maintaining compatibility using inter.broker.protocol.version and log.message.format.version. For ZooKeeper mode, you start by setting these to 3.1 to ensure backward compatibility, then gradually update them to 3.8. In KRaft mode, similar settings allow a seamless transition, preserving data integrity and compatibility throughout the upgrade process. Each step verifies that topics and data remain accessible, ensuring a smooth upgrade without disruption.
+
+## Prerequisites
 
 **Notes:**
 - Versions 2.8.0 to 3.5.x: Both ZooKeeper and KRaft are supported.
@@ -14,6 +16,9 @@
 | old_kafka          | 3.1.0   |
 | Zookeeper          | 3.7.2   |
 
+- Docker and Docker Compose installed
+- Basic understanding of Apache Kafka
+- Sufficient disk space for logs and data
 
 ## Quick Start
 
@@ -47,9 +52,6 @@ docker exec -it kafka bash
 ```bash
 cd /mnt
 ```
-
-# 1. Upgrade
-This documentation details upgrading Kafka from 3.1.0 to 3.8.0, focusing on maintaining compatibility using inter.broker.protocol.version and log.message.format.version. For ZooKeeper mode, you start by setting these to 3.1 to ensure backward compatibility, then gradually update them to 3.8. In KRaft mode, similar settings allow a seamless transition, preserving data integrity and compatibility throughout the upgrade process. Each step verifies that topics and data remain accessible, ensuring a smooth upgrade without disruption.
 
 ## Upgrade Zookeeper Version Kafka 3.1.0 to Kafka 3.8.0
 

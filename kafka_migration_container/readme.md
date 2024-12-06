@@ -4,13 +4,36 @@ This guide demonstrates how to migrate from a ZooKeeper-based Kafka cluster to K
 
 ## Prerequisites
 
+### Kafka and Zookeeper Version:
+| Component          | Version |
+|--------------------|---------|
+| new_kafka          | 3.8.0   |
+| old_kafka          | 3.1.0   |
+| Zookeeper          | 3.7.2   |
+
 - Docker and Docker Compose installed
 - Basic understanding of Apache Kafka
 - Sufficient disk space for logs and data
 
 ## Quick Start
 
-1. Start the Red-Hat container:
+### Pull The kafka-migrate-upgrade-test Container (Optional)
+
+```bash
+services:
+  kafka:
+    images: mucagriaktas/kafka-migration-test:v1
+    container_name: kafka
+    stdin_open: true
+    tty: true   
+    volumes:
+      - ./home/config:/mnt/config
+    command: /bin/bash
+```
+
+Check the readme in DockerHub: [https://hub.docker.com/repository/docker/mucagriaktas/kafka-migration-test/general](https://hub.docker.com/repository/docker/mucagriaktas/kafka-migration-test/general)
+
+1. Start the ubuntu (kafka) container:
 ```bash
 docker-compose up -d --build
 ```
@@ -20,9 +43,9 @@ docker-compose up -d --build
 docker exec -it kafka bash
 ```
 
-3. Create logs directory:
+3. You can find all kafka and zookeeper files in:
 ```bash
-mkdir /mnt/all_logs
+cd /mnt
 ```
 
 ## Configuration Steps
