@@ -123,6 +123,12 @@ docker exec -it kafka1 bash
 
 ### Grafana Monitoring
 
+#### Create Basic Topic:
+
+`localhost:8080` ==> `Create Topic` ==> `Set "Number of Partitions" = 3` and `Set "Replication Factor" = 3`
+
+![image](https://github.com/user-attachments/assets/4d6dad1c-8fec-46e8-a5b7-8f0636464bbc)
+
 #### Add Prometheus as a data source in Grafana:
 
 1. Login to Grafana (localhost:3000)
