@@ -39,3 +39,6 @@ docker-compose up -d --build
 | Scala                 | 2.12.18     |
 | Scala Kafka-Clients Jar| 3.8.0       |
 | Provectuse | v0.7.2 |
+| Prometheus | 2.45.0 |
+| Grafana | 10.4.14 |
+
