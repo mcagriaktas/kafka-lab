@@ -1,5 +1,5 @@
 # Kafka Commands Guide
-In this Kafka setup, you can use a `3-broker` Kafka cluster. The `Kafka UI (Provectus)` is accessible at `localhost:8080`. All `*.properties` and `*.yml` files are located in the config folder.
+In this Kafka setup, you can use `3-broker Kafka cluster`. The `Kafka UI (Provectus)` is accessible at `localhost:8080`. The `Prometheus UI` at `localhost:9090` allows monitoring of all Kafka broker metrics through `JMX exporters (localhost:7071, localhost:7072, localhost:7073)`, and `Grafana` at `localhost:3000` provides metric visualization. All configuration files `(*.properties and *.yml)` are located in the config folder.
 
 ## Basic Topic Operations
 
