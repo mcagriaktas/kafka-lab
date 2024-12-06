@@ -22,7 +22,7 @@ This guide demonstrates how to migrate from a ZooKeeper-based Kafka cluster to K
 ```bash
 services:
   kafka:
-    images: mucagriaktas/kafka-migration-test:v1
+    images: mucagriaktas/kafka-demo-container:v1
     container_name: kafka
     stdin_open: true
     tty: true   
