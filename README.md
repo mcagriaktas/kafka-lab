@@ -12,6 +12,8 @@ First, run the deploying.sh script located in the following folders:
 chmod +x deploying.sh
 
 ./deploying.sh
+
+docker-compose up -d --build
 ```
 
 ## ⚠️ Prerequisite: Create a Docker Network
