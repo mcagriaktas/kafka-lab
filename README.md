@@ -6,9 +6,16 @@ In each folder, you’ll find `*.properties, *.yml`, `*.py`, `*.scala`, and `*.s
 
 Additionally, this repository includes a setup for `Provectus Kafka UI`, a user-friendly interface for managing Kafka topics and brokers.
 
-## ⚠️ Prerequisite: Create a Docker Network
+## ⚠️ Prerequisite: Start the .sh Script to Resolve Any Issues
+First, run the deploying.sh script located in the following folders:
+```bash
+chmod +x deploying.sh
 
-First, create a Docker network to connect the containers:
+./deploying.sh
+```
+
+## ⚠️ Prerequisite: Create a Docker Network
+Create a Docker network to connect the containers:
 ```bash
 docker network create --subnet=172.80.0.0/16 dahbest
 ```
