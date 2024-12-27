@@ -2,10 +2,10 @@
 
 docker-compose up -d --build
 
-sleep 30
+sleep 15
 
 docker-compose down
 
 sleep 2
 
-sudo chown -R 777 -R data_logs/
+sudo chmod -R 777 -R data_logs
