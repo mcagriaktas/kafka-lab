@@ -107,6 +107,7 @@ services:
   grafana:
     container_name: grafana
     image: grafana/grafana:10.4.14
+    user: "472:472"
     ports:
       - "3000:3000"
     environment:
