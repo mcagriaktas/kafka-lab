@@ -1,1 +1,1 @@
-spark-submit --class StreamingApp --master local[*] --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3,com.typesafe.play:play-json_2.12:2.9.4 target/scala-2.12/main_2.12-0.1.0-SNAPSHOT.jar
+java jar kafka-docker-setup/PCS-Scripts-Scala-Python/ksql-producer/target/scala-2.12/main-assembly-0.1.0-SNAPSHOT.jar
