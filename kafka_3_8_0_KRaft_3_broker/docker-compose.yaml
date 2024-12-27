@@ -68,6 +68,25 @@ services:
       - kafka2
       - kafka3
 
+  ksqldb-server:
+    container_name: ksqldb
+    build:
+      context: container_images/ksqldb/.
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./config/ksqldb/server.properties:/etc/ksqldb/server.properties
+      - ./data_logs/kafka_data/ksql_data:/var/lib/kafka-streams
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.21
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+      
   prometheus:
     container_name: prometheus
     build:
