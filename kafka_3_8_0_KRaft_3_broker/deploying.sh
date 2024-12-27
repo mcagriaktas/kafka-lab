@@ -1,14 +1,8 @@
 #!/bin/bash
 
-# Create necessary directories
-mkdir -p data_logs/grafana_data
-mkdir -p data_logs/kafka_data
-mkdir -p data_logs/prometheus_data
-
-# Set permissions
 docker-compose up -d --build
 
-sleep 10
+sleep 30
 
 docker-compose down
 
