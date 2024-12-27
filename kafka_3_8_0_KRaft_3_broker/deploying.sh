@@ -14,4 +14,4 @@ docker-compose down
 
 sleep 2
 
-sudo chown -R 777 -R data_logs
+sudo chown -R 777 -R data_logs/
