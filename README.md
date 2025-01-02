@@ -41,7 +41,7 @@ docker-compose up -d --build
 
 | Component             | Version     |
 |-----------------------|-------------|
-| Kafka                 | 3.8.0 && 2.7.2       |
+| Kafka                 | 3.8.0 & 3.1.0 & 2.7.2       |
 | Zookeeper             | 3.7.2       |
 | KSQL                  | confluent-7.8.0 |
 | Java                  | 11-jre-slim && 17-slim-bullseye |
