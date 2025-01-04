@@ -256,7 +256,7 @@ In this step, you essentially need to restart all Kafka controllers and brokers.
 in this step you need to stop your kafka1, kafka2 and kafka3 controller then restart with step-3 controller.propertie file. If you're using demon service, you need to basicly restart your broker. First, restart the controller, then the broker!
 ```
 
-### Start Kafka1 step-3 controller.properties files:
+### Start Kafka1 step-3 controller.properties and broker.properties files:
 ```bash
 docker exec -it kafka1 bash
 
@@ -265,7 +265,7 @@ kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/step-3/controller.propert
 kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/step-3/broker.properties
 ```
 
-### Start Kafka2 step-3 controller.properties files:
+### Start Kafka2 step-3 controller.properties and broker.properties files:
 `in this step you need to stop your kafka2 controller then restart with step-3 controller.propertie file.`
 ```bash
 docker exec -it kafka2 bash
@@ -275,7 +275,7 @@ kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/step-3/controller.propert
 kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/step-3/broker.properties
 ```
 
-### Start Kafka3 step-3 controller.properties files:
+### Start Kafka3 step-3 controller.properties and broker.properties files:
 `in this step you need to stop your kafka3 controller then restart with step-3 controller.propertie file.`
 ```bash
 docker exec -it kafak3 bash
