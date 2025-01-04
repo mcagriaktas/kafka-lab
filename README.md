@@ -1,6 +1,6 @@
 # MULTI-KAFKA-DOCKER-SETUP
 
-Hello everyone! This repository contains two versions of Kafka along with a Kafka migration demo container. Each setup has its own folder with a dedicated README file, providing detailed instructions for setup and configuration.
+Hello everyone! This repository contains multi versions of Kafka along with a Kafka migration, upgrade and mirrormaker demo container. Each setup has its own folder with a dedicated README file, providing detailed instructions for setup and configuration.
 
 In each folder, you’ll find `*.properties, *.yml`, `*.py`, `*.scala`, and `*.sh` files to guide you through each configuration step. The `Dockerfile in each setup builds Kafka images from scratch, making it easy to understand how Kafka is installed and configured`.
 
