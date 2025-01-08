@@ -57,43 +57,12 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
-
-# Local .terraform directories in any subfolder
+# Terraform files
 **/.terraform/*
-
-# .tfstate files in any subfolder
+**/terraform.tfstate
+**/terraform.tfstate.backup
+**/.terraform.lock.hcl
 **/*.tfstate
 **/*.tfstate.*
-
-# Crash log files
 **/crash.log
-**/crash.*.log
-
-# Exclude all .tfvars files, which might contain sensitive data
 **/*.tfvars
-**/*.tfvars.json
-
-# Ignore override files as they're usually used for local dev
-**/*override.tf
-**/*override.tf.json
-**/_override.tf
-**/_override.tf.json
-
-# Ignore CLI configuration files
-**/.terraformrc
-**/terraform.rc
-
-# Ignore lock files (optional, you might want to keep these in version control)
-**/.terraform.lock.hcl
-
-# Ignore plan files
-**/plan.out
-**/plan.out.*
-**/*.plan
-
-# Logs
-**/*.log
-
-# Local development
-**/.env
-**/.envrc
