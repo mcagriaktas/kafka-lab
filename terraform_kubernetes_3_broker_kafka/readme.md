@@ -16,6 +16,8 @@ This project provides a Terraform infrastructure for deploying a scalable Apache
 - Terraform installed (v1.0 or later)
 - kubectl configured with cluster access
 - Python and pip (for sample scripts)
+  
+<img width="1024" alt="pods-producer-consumer" src="https://github.com/user-attachments/assets/6c075c57-bbac-412a-9a1a-8016aac49f42" />
 
 ## Quick Start
 
