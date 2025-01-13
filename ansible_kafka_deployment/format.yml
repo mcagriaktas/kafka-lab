@@ -1,0 +1,43 @@
+---
+# format.yml
+
+- hosts: all
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if cluster is formatted
+      stat:
+        path: "{{ install_path }}/kafka/log/data/meta.properties"
+      register: meta_properties
+
+    - name: Check existing cluster ID
+      shell: "grep 'cluster.id' {{ install_path }}/kafka/log/data/meta.properties | awk -F'=' '{print $2}'"
+      register: existing_cluster_id
+      changed_when: false
+      failed_when: false
+      when: meta_properties.stat.exists
+
+    - name: Debug cluster format status
+      debug:
+        msg: >-
+          {% if meta_properties.stat.exists %}
+          Kafka cluster is already formatted on {{ inventory_hostname }} ({{ ansible_host }})
+          Cluster ID: {{ existing_cluster_id.stdout }}
+          {% else %}
+          Kafka cluster needs formatting on {{ inventory_hostname }} ({{ ansible_host }})
+          {% endif %}
+
+    - name: Generate cluster ID
+      shell: "{{ install_path }}/kafka/bin/kafka-storage.sh random-uuid"
+      register: cluster_id
+      run_once: true
+      when: not meta_properties.stat.exists
+
+    - name: Format Kafka storage
+      shell: |
+        {{ install_path }}/kafka/bin/kafka-storage.sh format \
+        --config {{ install_path }}/kafka/config/kraft/server.properties \
+        --cluster-id {{ cluster_id.stdout }} \
+        --ignore-formatted
+      when: not meta_properties.stat.exists

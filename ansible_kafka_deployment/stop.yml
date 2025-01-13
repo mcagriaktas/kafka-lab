@@ -1,0 +1,43 @@
+---
+# stop.yml
+
+- hosts: all
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if Kafka is running
+      shell: "ps aux | grep -i 'kafka.Kafka' | grep -v grep"
+      register: kafka_status
+      changed_when: false
+      failed_when: false
+
+    - name: Debug Kafka process status
+      debug:
+        msg: >-
+          {% if kafka_status.rc == 0 %}
+          Kafka process is running on {{ inventory_hostname }} ({{ ansible_host }}), attempting to stop...
+          {% else %}
+          Kafka cluster is not running on {{ inventory_hostname }} ({{ ansible_host }})
+          {% endif %}
+
+    - name: Stop Kafka server
+      shell: "{{ install_path }}/kafka/bin/kafka-server-stop.sh"
+      when: kafka_status.rc == 0
+
+    - name: Wait for Kafka to stop
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ kafka_port | default('9092') }}"
+        state: stopped
+        timeout: 30
+      when: kafka_status.rc == 0
+
+    - name: Show final status
+      debug:
+        msg: >-
+          {% if kafka_status.rc == 0 %}
+          Kafka has been successfully stopped on {{ inventory_hostname }} ({{ ansible_host }})
+          {% else %}
+          No action needed - Kafka was already stopped on {{ inventory_hostname }} ({{ ansible_host }})
+          {% endif %}

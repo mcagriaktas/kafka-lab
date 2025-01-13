@@ -1,0 +1,66 @@
+---
+# install.yml
+
+- hosts: broker1,broker2
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check Java version
+      shell: java --version
+      register: java_check
+      ignore_errors: yes
+
+    - name: Debug java version output
+      debug:
+        var: java_check.stdout
+
+    - name: Verify Java version meets requirements
+      set_fact:
+        java_ok: "{{ java_check.stdout is regex('openjdk (8|11|17)') }}"
+
+    - name: Show error if Java version is incorrect
+      fail:
+        msg: "Java version is not compatible. Please install Java 8 or Java 11-17"
+      when: not java_ok | bool
+
+    - name: Check if Kafka base directory exists
+      stat:
+        path: "{{ install_path }}/kafka"
+      register: kafka_base_dir
+
+    - name: Create Kafka base directory with sudo
+      become: yes
+      file:
+        path: "{{ install_path }}/kafka"
+        state: directory
+        owner: kafka
+        group: kafka
+        mode: '0755'
+      when: enable_sudo|bool and not kafka_base_dir.stat.exists
+      register: kafka_dir_created
+
+    - name: Display manual creation message
+      fail:
+        msg: "ERROR: {{ install_path }}/kafka directory doesn't exist. Please create it manually with proper permissions since sudo is disabled."
+      when: not enable_sudo|bool and not kafka_base_dir.stat.exists
+
+    - name: Download Kafka using wget
+      shell: "wget {{ kafka_url }} -P /tmp"
+      args:
+        creates: "/tmp/kafka_2.13-{{ kafka_version }}.tgz"
+      when: kafka_base_dir.stat.exists or kafka_dir_created.changed
+
+    - name: Extract Kafka directly to /opt/kafka
+      unarchive:
+        src: "/tmp/kafka_2.13-{{ kafka_version }}.tgz"
+        dest: "{{ install_path }}/kafka"
+        extra_opts: ["--strip-components=1"]
+        remote_src: yes
+      when: kafka_base_dir.stat.exists or kafka_dir_created.changed
+
+    - name: Remove downloaded archive
+      file:
+        path: "/tmp/kafka_2.13-{{ kafka_version }}.tgz"
+        state: absent
+      when: kafka_base_dir.stat.exists or kafka_dir_created.changed

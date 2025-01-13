@@ -1,0 +1,43 @@
+---
+# start.yml
+
+- hosts: all
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if Kafka is already running
+      shell: "ps aux | grep -i 'kafka.Kafka' | grep -v grep"
+      register: kafka_status
+      changed_when: false
+      failed_when: false
+
+    - name: Debug Kafka status
+      debug:
+        msg: >-
+          {% if kafka_status.rc == 0 %}
+          Kafka is already running on {{ inventory_hostname }} ({{ ansible_host }})
+          {% else %}
+          Starting Kafka on {{ inventory_hostname }} ({{ ansible_host }})
+          {% endif %}
+
+    - name: Start Kafka server
+      shell: "{{ install_path }}/kafka/bin/kafka-server-start.sh -daemon {{ install_path }}/kafka/config/kraft/server.properties"
+      when: kafka_status.rc != 0
+
+    - name: Wait for Kafka to start
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ kafka_port | default('9092') }}"
+        timeout: 30
+        state: started
+      when: kafka_status.rc != 0
+
+    - name: Show final status
+      debug:
+        msg: >-
+          {% if kafka_status.rc == 0 %}
+          Kafka was already running on {{ inventory_hostname }} ({{ ansible_host }})
+          {% else %}
+          Kafka has been started on {{ inventory_hostname }} ({{ ansible_host }})
+          {% endif %}

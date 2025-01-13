@@ -1,0 +1,32 @@
+---
+# status.yml
+
+- hosts: all
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check Kafka process
+      shell: "ps aux | grep -i 'kafka.Kafka' | grep -v grep"
+      register: kafka_process
+      changed_when: false
+      failed_when: false
+
+    - name: Check Kafka port
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ kafka_port | default('9092') }}"
+        timeout: 5
+        state: started
+      register: kafka_port_check
+      ignore_errors: yes
+
+    - name: Show Kafka Status
+      debug:
+        msg: |
+          Status for {{ inventory_hostname }} ({{ ansible_host }}):
+          Process Status: {{ 'Running' if kafka_process.rc == 0 else 'Not Running' }}
+          Port Status: {{ 'Listening' if kafka_port_check.state == 'started' else 'Not Listening' }}
+          Cluster ID: {{ cluster_id.stdout if cluster_id.stdout is defined else 'Not Formatted' }}
+          Process Details:
+          {{ kafka_process.stdout if kafka_process.stdout != '' else 'No Kafka process found' }}

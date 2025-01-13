@@ -1,0 +1,54 @@
+---
+# restart.yml
+
+- hosts: all
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if Kafka is running
+      shell: "ps aux | grep -i 'kafka.Kafka' | grep -v grep"
+      register: kafka_status
+      changed_when: false
+      failed_when: false
+
+    - name: Debug initial status
+      debug:
+        msg: "Kafka is {{ 'running' if kafka_status.rc == 0 else 'not running' }} on {{ inventory_hostname }} ({{ ansible_host }})"
+
+    - name: Stop Kafka if running
+      shell: "{{ install_path }}/kafka/bin/kafka-server-stop.sh"
+      when: kafka_status.rc == 0
+
+    - name: Wait for Kafka to stop
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ kafka_port | default('9092') }}"
+        state: stopped
+        timeout: 30
+      when: kafka_status.rc == 0
+
+    - name: Wait for a moment before starting
+      pause:
+        seconds: 5
+      when: kafka_status.rc == 0
+
+    - name: Start Kafka server
+      shell: "{{ install_path }}/kafka/bin/kafka-server-start.sh -daemon {{ install_path }}/kafka/config/kraft/server.properties"
+
+    - name: Wait for Kafka to start
+      wait_for:
+        host: "{{ ansible_host }}"
+        port: "{{ kafka_port | default('9092') }}"
+        timeout: 30
+        state: started
+
+    - name: Verify Kafka is running
+      shell: "ps aux | grep -i 'kafka.Kafka' | grep -v grep"
+      register: kafka_final_status
+      changed_when: false
+      failed_when: false
+
+    - name: Show final status
+      debug:
+        msg: "Kafka has been restarted and is {{ 'now running' if kafka_final_status.rc == 0 else 'failed to start' }} on {{ inventory_hostname }} ({{ ansible_host }})"

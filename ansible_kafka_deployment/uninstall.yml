@@ -1,0 +1,33 @@
+---
+# uninstall.yml
+
+- hosts: broker1,broker2
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Check if Kafka directory exists
+      stat:
+        path: "{{ install_path }}/kafka"
+      register: kafka_dir
+
+    - name: Delete all files inside Kafka directory first
+      shell: "rm -rf {{ install_path }}/kafka/*"
+      when: kafka_dir.stat.exists
+
+    - name: Delete empty Kafka directory
+      become: yes
+      file:
+        path: "{{ install_path }}/kafka"
+        state: absent
+      when: kafka_dir.stat.exists and enable_sudo|bool
+
+    - name: Show manual deletion message
+      debug:
+        msg: "Files inside /opt/kafka have been deleted. Please manually remove the empty /opt/kafka directory (requires sudo)"
+      when: kafka_dir.stat.exists and not enable_sudo|bool
+
+    - name: Show completion message
+      debug:
+        msg: "Kafka has been uninstalled successfully"
+      when: kafka_dir.stat.exists and enable_sudo|bool

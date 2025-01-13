@@ -1,0 +1,34 @@
+---
+# push-config.yml
+
+- hosts: all
+  become: no
+  vars_files:
+    - vars.yml
+  tasks:
+    - name: Get broker ID from hostname
+      set_fact:
+        broker_id: "{{ inventory_hostname | regex_replace('server', '') }}"
+
+    - name: Check if broker config exists
+      local_action:
+        module: stat
+        path: "config/broker-{{ broker_id }}/server.properties"
+      register: config_file
+
+    - name: Fail if config file doesn't exist
+      fail:
+        msg: "Config file for broker-{{ broker_id }} doesn't exist at config/broker-{{ broker_id }}/server.properties"
+      when: not config_file.stat.exists
+
+    - name: Create KRaft config directory on broker
+      file:
+        path: "{{ install_path }}/kafka/config/kraft"
+        state: directory
+        mode: '0755'
+
+    - name: Copy broker configuration
+      copy:
+        src: "config/broker-{{ broker_id }}/server.properties"
+        dest: "{{ install_path }}/kafka/config/kraft/server.properties"
+        mode: '0644'

@@ -1,0 +1,19 @@
+---
+# Created by M. Cagri AKTAS
+# vars.yml
+
+# Please confirm your kafka version, 'https://kafka.apache.org/downloads'
+kafka_version: "3.8.0"
+
+# Please ensure your kafka version 8,11 and 17
+java_version: "17"
+
+# Download links
+kafka_url: "https://archive.apache.org/dist/kafka/{{ kafka_version }}/kafka_2.13-{{ kafka_version }}.tgz"
+
+# Please confirm your installation path:
+# This is the base directory where Kafka will be installed but the actual Kafka directory will be /opt/kafka, for example {install_path}/kafka
+install_path: "/opt"
+
+# Enable sudo for directory creation (true/false)
+enable_sudo: yes
