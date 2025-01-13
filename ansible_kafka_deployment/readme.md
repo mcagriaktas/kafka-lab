@@ -2,8 +2,10 @@
 
 This documentation covers the setup and management of a Kafka cluster using Ansible playbooks.
 
-`This deployment supports only the KRaft Kafka version.`
-
+Important Info:
+1. `This deployment supports only the KRaft Kafka version.`
+2. `Each broker's server.properties file must be placed in a separate folder within the config directory.`
+   
 ## Directory Structure
 
 ```
