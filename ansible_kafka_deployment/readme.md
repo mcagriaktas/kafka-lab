@@ -2,6 +2,8 @@
 
 This documentation covers the setup and management of a Kafka cluster using Ansible playbooks.
 
+`This deployment supports only the KRaft Kafka version.`
+
 ## Directory Structure
 
 ```
