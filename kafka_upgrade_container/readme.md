@@ -53,6 +53,13 @@ docker exec -it kafka bash
 cd /mnt
 ```
 
+**Note**: In this demo, we'll use two metrics during the upgrade process. While some versions may not require these metrics, differences in metadata protocols across versions necessitate their use for security purposes.
+
+```
+inter.broker.protocol.version=x.y
+log.message.format.version=x.y
+```
+
 ## Upgrade Zookeeper Version Kafka 3.1.0 to Kafka 3.8.0
 
 **Note**: This documentation follows a single broker. If you're running multiple brokers, the process is the same; just ensure every broker has the same `server.properties`.
@@ -71,25 +78,29 @@ syncLimit=5
 ### Start ZooKeeper:
 
 ```bash
-./zkServer.sh start
+/mnt/apache-zookeeper-3.7.2-bin/bin/zkServer.sh start
 ```
 
 ### Add These Config Lines in server.properties:
+`The file in the /mnt/config/kafka_3_1_0/zoo_server.properties`
 
 ```bash
 log.dirs=/home/ubuntu/logs/kafka
+
+inter.broker.protocol.version=3.1
+log.message.format.version=3.1
 ```
 
 ### Start Kafka 3.1.0:
 
 ```bash
-./kafka-server-start.sh /mnt/config/kafka_3_1_0/zoo_server.properties
+/mnt/kafka_2.13-3.1.0/bin/kafka-server-start.sh /mnt/config/kafka_3_1_0/zoo_server.properties
 ```
 
 ### Create Sample Data:
 
 ```bash
-./kafka-console-producer.sh --bootstrap-server localhost:9092 --topic cagri
+/mnt/kafka_2.13-3.1.0/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic cagri
 ```
 
 ```bash
@@ -102,6 +113,61 @@ log.dirs=/home/ubuntu/logs/kafka
 ### Read Sample Data to Ensure:
 
 ```bash
+/mnt/kafka_2.13-3.1.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
+```
+
+```bash
+# Output
+1
+2
+3
+```
+
+### Download and Install Kafka 3.8.0:
+The container already have the kafka version check:
+
+```bash
+cd /mnt
+```
+
+### Copy Existing server.properties to Replace 3.8.0 server.properties:
+
+```bash
+# Your log path must match the one specified in the old server.properties file.
+log.dirs=/home/ubuntu/logs/kafka
+
+# Don't make any changes when starting your cluster for the first time.
+inter.broker.protocol.version=3.1 
+log.message.format.version=3.1
+```
+
+### Stop Kafka 3.1.0:
+
+```bash
+# Either press Ctrl+C or
+/mnt/kafka_2.13-3.1.0/bin/kafka-server-stop.sh
+```
+
+### Start Kafka 3.8.0:
+
+```bash
+/mnt/kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/kafka_3_8_0/zoo_server.properties
+```
+
+### Check Topics:
+
+```bash
+./kafka-topics.sh --bootstrap-server localhost:9092 --list
+```
+
+```bash
+# Output
+__consumer_offsets
+cagri
+```
+
+### Verify Data:
+```bash
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
 ```
 
@@ -112,69 +178,46 @@ log.dirs=/home/ubuntu/logs/kafka
 3
 ```
 
-### Download and Install New Kafka 3.8.0:
-The container already have the kafka version check:
+### Wait for synchronization to complete, then update the server.properties file.
 
 ```bash
-cd /mnt
-```
-
-### Copy Existing server.properties to Replace 3.8.0 server.properties:
-```bash
+# Your log path must match the one specified in the old server.properties file.
 log.dirs=/home/ubuntu/logs/kafka
-```
 
-### Stop Kafka 3.1.0:
-```bash
-# Either press Ctrl+C or
-./kafka-server-stop.sh
-```
-
-### Start Kafka 3.8.0:
-```bash
-./kafka-server-start.sh /mnt/config/kafka_3_8_0/zoo_server.properties
-```
-
-### Check Topics:
-```bash
-./kafka-topics.sh --bootstrap-server localhost:9092 --list
-```
-
-__consumer_offsets
-cagri
-
-### Verify Data:
-```bash
-./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
-```
-
-### Update 3.8.0 server.properties:
-```bash
-log.dirs=/home/ubuntu/logs/kafka
+inter.broker.protocol.version=3.8 
+log.message.format.version=3.8
 ```
 
 ### Stop Kafka 3.8.0:
+
 ```bash
 # Either press Ctrl+C or
-./kafka-server-stop.sh
+/mnt/kafka_2.13-3.8.0/bin/kafka-server-stop.sh
 ```
 
 ### Start Kafka 3.8.0 Again:
+
 ```bash
-./kafka-server-start.sh /mnt/config/kafka3_8_0/zoo_server.properties
+/mnt/kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/kafka3_8_0/zoo_server.properties
 ```
 
 ### Check Topics:
+
 ```bash
 ./kafka-topics.sh --bootstrap-server localhost:9092 --list
 ```
 
+```bash
+# Output
+__consumer_offsets
+cagri
+```
+
 ### Verify Data:
+
 ```bash
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
 ```
-
-### Read Sample Data:
 
 ```bash
 # Output
@@ -185,43 +228,48 @@ log.dirs=/home/ubuntu/logs/kafka
 
 ## Upgrade KRaft Version Kafka 3.1.0 to Kafka 3.8.0
 
-### server.properties for KRaft:
-`The file in the config/kraft/server.properties`
+### Add These Config Lines in server.properties:
+`The file in the /mnt/config/kafka_3_1_0/kraft_server.properties`
 
 ```bash
 log.dirs=/home/ubuntu/logs/kafka
 
-inter.broker.protocol.version=3.1 
-log.message.format.version=3.1 
+inter.broker.protocol.version=3.1
+log.message.format.version=3.1
 ```
 
 ### Format Logs Path (If Cluster is New):
+
 ```bash
-./kafka-storage.sh format \
+/mnt/kafka_2.13-3.1.0/bin/kafka-storage.sh format \
     --config /mnt/config/kafka_3_1_0/kraft_server.properties \
     --cluster-id U2TYzXg8Q2ODk3o0eiW6YQ \
     --ignore-formatted
 ```
 
 ### Start KRaft Kafka 3.1.0:
+
 ```bash
-./kafka-server-start.sh /mnt/kafka_2.13-3.1.0/config/kraft/server.properties
+/mnt/kafka_2.13-3.1.0/bin/kafka-server-start.sh /mnt/config/kafka_3_1_0/kraft_server.properties
 ```
 
-### Create Example Data:
+### Create Sample Data:
+
 ```bash
-./kafka-console-producer.sh --bootstrap-server localhost:9092 --topic cagri
+/mnt/kafka_2.13-3.1.0/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic cagri
 ```
 
 ```bash
 # Output
->1
->2
->3
+> 1
+> 2
+> 3
 ```
 
+### Read Sample Data to Ensure:
+
 ```bash
-./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
+/mnt/kafka_2.13-3.1.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
 ```
 
 ```bash
@@ -231,12 +279,6 @@ log.message.format.version=3.1
 3
 ```
 
-### Stop KRaft Kafka 3.1.0:
-```bash
-# Either press Ctrl+C or
-./bin/kafka-server-stop.sh
-```
-
 ### Download and Install Kafka 3.8.0:
 The container already have the kafka version check:
 
@@ -244,18 +286,32 @@ The container already have the kafka version check:
 cd /mnt
 ```
 
-### Start Kafka 3.8.0:
+### Copy Existing server.properties to Replace 3.8.0 server.properties:
+
 ```bash
-# You log path must be same as old server.properties.
+# Your log path must match the one specified in the old server.properties file.
 log.dirs=/home/ubuntu/logs/kafka
+
+# Don't make any changes when starting your cluster for the first time.
+inter.broker.protocol.version=3.1 
+log.message.format.version=3.1
+```
+
+### Stop KRaft Kafka 3.1.0:
+
+```bash
+# Either press Ctrl+C or
+/mnt/kafka_2.13-3.1.0/bin/kafka-server-stop.sh
 ```
 
 ### Start KRaft Kafka 3.8.0:
+
 ```bash
-./kafka-server-start.sh /mnt/config/kafka_3_8_0/kraft_server.properties
+/mnt/kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/kafka_3_8_0/kraft_server.properties
 ```
 
 ### Check Topics:
+
 ```bash
 ./kafka-topics.sh --bootstrap-server localhost:9092 --list
 ```
@@ -266,18 +322,7 @@ __consumer_offsets
 cagri
 ```
 
-### Update server.properties:
-```bash
-inter.broker.protocol.version=3.8 
-log.message.format.version=3.8
-```
-
-### Start KRaft Kafka 3.8.0:
-```bash
-./kafka-server-start.sh /mnt/config/kafka_3_8_0/kraft_server.properties
-```
-
-### Verify KRaft Kafka 3.8.0:
+### Verify Data:
 ```bash
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
 ```
@@ -288,3 +333,53 @@ log.message.format.version=3.8
 2
 3
 ```
+
+### Wait for synchronization to complete, then update the server.properties file.
+
+```bash
+# Your log path must match the one specified in the old server.properties file.
+log.dirs=/home/ubuntu/logs/kafka
+
+inter.broker.protocol.version=3.8
+log.message.format.version=3.8
+```
+
+### Stop Kafka 3.8.0:
+```bash
+# Either press Ctrl+C or
+/mnt/kafka_2.13-3.8.0/bin/kafka-server-stop.sh
+```
+
+### Start Kafka 3.8.0 Again:
+```bash
+/mnt/kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/kafka3_8_0/kraft_server.properties
+```
+
+### Check Topics:
+
+```bash
+./kafka-topics.sh --bootstrap-server localhost:9092 --list
+```
+
+```bash
+# Output
+__consumer_offsets
+cagri
+```
+
+### Verify Data:
+
+```bash
+/mnt/kafka_2.13-3.8.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
+```
+
+```bash
+# Output
+1
+2
+3
+```
+
+## References:
+- https://kafka.apache.org/documentation/#upgrade
+- https://learn.conduktor.io/kafka/kafka-broker-and-client-upgrades/

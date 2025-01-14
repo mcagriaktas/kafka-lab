@@ -1,4 +1,4 @@
-FROM ubuntu:24.10
+FROM openjdk:24-ea-17-jdk-slim-bullseye
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -8,12 +8,9 @@ RUN apt-get update && \
     procps \
     wget \
     net-tools \
-    python3 \
-    python3-pip \
     ncurses-bin \
     lsof \
     vim \
-    openjdk-17-jdk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
     
