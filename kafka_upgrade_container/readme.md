@@ -78,9 +78,6 @@ syncLimit=5
 
 ```bash
 log.dirs=/home/ubuntu/logs/kafka
-
-inter.broker.protocol.version=3.1
-log.message.format.version=3.1
 ```
 
 ### Start Kafka 3.1.0:
@@ -125,10 +122,6 @@ cd /mnt
 ### Copy Existing server.properties to Replace 3.8.0 server.properties:
 ```bash
 log.dirs=/home/ubuntu/logs/kafka
-
-# Don't change these on first start
-inter.broker.protocol.version=3.1
-log.message.format.version=3.1
 ```
 
 ### Stop Kafka 3.1.0:
@@ -157,8 +150,7 @@ cagri
 
 ### Update 3.8.0 server.properties:
 ```bash
-inter.broker.protocol.version=3.8
-log.message.format.version=3.8
+log.dirs=/home/ubuntu/logs/kafka
 ```
 
 ### Stop Kafka 3.8.0:
@@ -254,11 +246,8 @@ cd /mnt
 
 ### Start Kafka 3.8.0:
 ```bash
-# Don't change the protocol on first start
+# You log path must be same as old server.properties.
 log.dirs=/home/ubuntu/logs/kafka
-
-inter.broker.protocol.version=3.1
-log.message.format.version=3.1
 ```
 
 ### Start KRaft Kafka 3.8.0:
