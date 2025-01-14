@@ -12,6 +12,7 @@ RUN apt-get update && \
     python3-pip \
     ncurses-bin \
     lsof \
+    vim \
     openjdk-17-jdk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*

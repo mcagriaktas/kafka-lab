@@ -86,7 +86,7 @@ log.message.format.version=3.1
 ### Start Kafka 3.1.0:
 
 ```bash
-./kafka-server-start.sh /mnt/kafka_2.13-3.1.0/config/server.properties
+./kafka-server-start.sh /mnt/config/kafka_3_1_0/zoo_server.properties
 ```
 
 ### Create Sample Data:
@@ -115,13 +115,6 @@ log.message.format.version=3.1
 3
 ```
 
-### Stop Kafka 3.1.0:
-
-```bash
-# Either press Ctrl+C in terminal or
-./kafka-server-stop.sh
-```
-
 ### Download and Install New Kafka 3.8.0:
 The container already have the kafka version check:
 
@@ -133,18 +126,20 @@ cd /mnt
 ```bash
 log.dirs=/home/ubuntu/logs/kafka
 
-zookeeper.connect=localhost:2181
-zookeeper.connection.timeout.ms=18000
-migration.enabled=true
-
 # Don't change these on first start
 inter.broker.protocol.version=3.1
 log.message.format.version=3.1
 ```
 
+### Stop Kafka 3.1.0:
+```bash
+# Either press Ctrl+C or
+./kafka-server-stop.sh
+```
+
 ### Start Kafka 3.8.0:
 ```bash
-./kafka-server-start.sh /mnt/kafka_2.13-3.8.0/config/server.properties
+./kafka-server-start.sh /mnt/config/kafka_3_8_0/zoo_server.properties
 ```
 
 ### Check Topics:
@@ -155,16 +150,9 @@ log.message.format.version=3.1
 __consumer_offsets
 cagri
 
-### Stop Kafka 3.1.0:
+### Verify Data:
 ```bash
-# Either press Ctrl+C or
-./kafka-server-stop.sh
-```
-
-### Stop Kafka 3.8.0:
-```bash
-# Either press Ctrl+C or
-./kafka-server-stop.sh
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic cagri --from-beginning
 ```
 
 ### Update 3.8.0 server.properties:
@@ -173,9 +161,20 @@ inter.broker.protocol.version=3.8
 log.message.format.version=3.8
 ```
 
+### Stop Kafka 3.8.0:
+```bash
+# Either press Ctrl+C or
+./kafka-server-stop.sh
+```
+
 ### Start Kafka 3.8.0 Again:
 ```bash
-./kafka-server-start.sh /mnt/kafka_2.13-3.8.0/config/server.properties
+./kafka-server-start.sh /mnt/config/kafka3_8_0/zoo_server.properties
+```
+
+### Check Topics:
+```bash
+./kafka-topics.sh --bootstrap-server localhost:9092 --list
 ```
 
 ### Verify Data:
@@ -207,7 +206,7 @@ log.message.format.version=3.1
 ### Format Logs Path (If Cluster is New):
 ```bash
 ./kafka-storage.sh format \
-    --config /mnt/kafka_2.13-3.1.0/config/kraft/server.properties \
+    --config /mnt/config/kafka_3_1_0/kraft_server.properties \
     --cluster-id U2TYzXg8Q2ODk3o0eiW6YQ \
     --ignore-formatted
 ```
@@ -264,7 +263,7 @@ log.message.format.version=3.1
 
 ### Start KRaft Kafka 3.8.0:
 ```bash
-./kafka-server-start.sh /mnt/kafka_2.13-3.8.0/config/kraft/server.properties
+./kafka-server-start.sh /mnt/config/kafka_3_8_0/kraft_server.properties
 ```
 
 ### Check Topics:
@@ -286,7 +285,7 @@ log.message.format.version=3.8
 
 ### Start KRaft Kafka 3.8.0:
 ```bash
-./kafka-server-start.sh /mnt/kafka_2.13-3.8.0/config/kraft/server.properties
+./kafka-server-start.sh /mnt/config/kafka_3_8_0/kraft_server.properties
 ```
 
 ### Verify KRaft Kafka 3.8.0:
