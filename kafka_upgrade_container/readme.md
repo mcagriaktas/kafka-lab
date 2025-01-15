@@ -60,6 +60,29 @@ inter.broker.protocol.version=x.y
 log.message.format.version=x.y
 ```
 
+| Confluent Platform Version | Kafka Broker Protocol Version     |
+|----------------------------|-----------------------------------|
+| 7.8.x                      | inter.broker.protocol.version=3.8 |
+| 7.7.x                      | inter.broker.protocol.version=3.7 |
+| 7.6.x                      | inter.broker.protocol.version=3.6 |
+| 7.5.x                      | inter.broker.protocol.version=3.5 |
+| 7.4.x                      | inter.broker.protocol.version=3.4 |
+| 7.3.x                      | inter.broker.protocol.version=3.3 |
+| 7.2.x                      | inter.broker.protocol.version=3.2 |
+| 7.1.x                      | inter.broker.protocol.version=3.1 |
+| 7.0.x                      | inter.broker.protocol.version=3.0 |
+
+------------------------------------------------------------------
+
+| Confluent Platform Version | Kafka Metadata Versions          |
+|----------------------------|----------------------------------|
+| 7.8.x                      | 3.8-IV0                          |
+| 7.7.x                      | 3.7-IV0 through 3.7-IV4          |
+| 7.6.x                      | 3.6-IV0 through 3.6-IV2          |
+| 7.5.x                      | 3.5-IV0 through 3.5-IV2          |
+| 7.4.x                      | 3.4-IV0                          |
+| 7.3.x                      | 3.3-IV0 through 3.3-IV3          |
+
 ## Upgrade Zookeeper Version Kafka 3.1.0 to Kafka 3.8.0
 
 **Note**: This documentation follows a single broker. If you're running multiple brokers, the process is the same; just ensure every broker has the same `server.properties`.
@@ -345,14 +368,22 @@ log.message.format.version=3.8
 ```
 
 ### Stop Kafka 3.8.0:
+
 ```bash
 # Either press Ctrl+C or
 /mnt/kafka_2.13-3.8.0/bin/kafka-server-stop.sh
 ```
 
 ### Start Kafka 3.8.0 Again:
+
 ```bash
 /mnt/kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/config/kafka3_8_0/kraft_server.properties
+```
+
+### Upgrade metadata:
+
+```bash
+/mnt/kafka_2.13-3.8.0/bin/kafka-features upgrade --bootstrap-server localhost:9092 --metadata 3.8
 ```
 
 ### Check Topics:
