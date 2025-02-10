@@ -1,5 +1,7 @@
 # Flink Demo
 
+<img width="934" alt="flinksql" src="https://github.com/user-attachments/assets/01223301-cb0e-4a77-898a-07f72c19b3f3" />
+
 ## Prerequisites
 - Linux Env.
 - Docker
