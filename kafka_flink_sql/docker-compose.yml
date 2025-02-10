@@ -1,0 +1,49 @@
+services:
+  jobmanager:
+    container_name: jobmanager
+    command: jobmanager
+    build: 
+      context: ./images/flink
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+      - "6123:6123"
+    volumes:
+      - ./config/jobmanager/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml
+      - ./logs/jobmanager:/opt/flink/log
+      - ./jobs:/opt/flink/jobs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.70
+
+  taskmanager:
+    container_name: taskmanager
+    command: taskmanager
+    build: 
+      context: ./images/flink
+      dockerfile: Dockerfile
+    volumes:
+      - ./config/taskmanager/flink-conf.yaml:/opt/flink/conf/flink-conf.yaml
+      - ./logs/taskmanager:/opt/flink/log
+      - ./jobs:/opt/flink/jobs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.71
+
+  kafka:
+    container_name: kafka
+    build:
+      context: images/kafka
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./config/kafka/server.properties:/kafka/config/server.properties
+      - ./logs/kafka/:/data/kafka/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+networks:
+  dahbest:
+    external: true

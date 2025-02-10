@@ -1,0 +1,57 @@
+# JobManager connection settings
+jobmanager.rpc.address: jobmanager        
+jobmanager.rpc.port: 6123
+jobmanager.memory.process.size: 10gb 
+
+# TaskManager configuration
+taskmanager.bind-host: 0.0.0.0            
+taskmanager.memory.process.size: 20gb
+#taskmanager.memory.framework.heap.size: 2gb
+#taskmanager.memory.task.heap.size: 2gb
+taskmanager.numberOfTaskSlots: 4
+#taskmanager.memory.network.min: 64mb
+#taskmanager.memory.network.max: 64mb
+
+# Parallelism and slots
+parallelism.default: 2
+classloader.resolve-order: parent-first
+
+# State backend and checkpointing
+state.backend: filesystem
+state.backend.incremental: true
+pipeline.classpaths: file:///opt/flink/lib
+state.checkpoints.dir: file:///flink-checkpoints
+state.savepoints.dir: file:///flink-savepoints
+# execution.checkpointing.interval: 180000
+# execution.checkpointing.mode: EXACTLY_ONCE
+execution.checkpointing.interval: 1000
+execution.checkpointing.mode: AT_LEAST_ONCE
+execution.checkpointing.min-pause: 500
+execution.checkpointing.timeout: 10000
+execution.checkpointing.max-concurrent-checkpoints: 1
+
+# Metrics and monitoring
+metrics.reporter.promgateway.class: org.apache.flink.metrics.prometheus.PrometheusReporter
+metrics.reporter.promgateway.port: 9250
+
+# SQL Client specific configurations
+sql-gateway.enabled: true
+sql-gateway.endpoint.rest.port: 8082
+sql-gateway.endpoint.rest.bind-address: 0.0.0.0
+sql-gateway.endpoint.rest.address: 0.0.0.0
+
+# Network configuration
+#taskmanager.network.memory.fraction: 0.1
+#taskmanager.network.memory.min: 64mb
+#taskmanager.network.memory.max: 64mb
+
+# Fault tolerance
+restart-strategy: fixed-delay
+restart-strategy.fixed-delay.attempts: 3
+restart-strategy.fixed-delay.delay: 10s
+
+# High availability (if using ZooKeeper)
+# high-availability: zookeeper
+# high-availability.zookeeper.quorum: zookeeper:2181
+# high-availability.storageDir: hdfs:///flink/recovery
+# high-availability.zookeeper.path.root: /flink
