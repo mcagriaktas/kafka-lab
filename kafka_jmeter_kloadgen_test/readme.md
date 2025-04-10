@@ -87,15 +87,7 @@ http://localhost:8081/subjects/hoteldata_json-value/versions
 ```
 
 ### 7. Create Sample Data
-
-```bash
-cat > hoteldata.csv << 'EOF'
-review_id,hotel_id,user_id,rating,review_date,stay_duration,traveler_type,room_type,title,review_text,helpful_votes,location_score,service_score,cleanliness_score,value_score,is_verified,language,country_origin,has_response,booking_channel
-REV123456,HTL7890,USR45678,4.5,2025-03-15,3,business,deluxe,"Great business stay","The hotel was excellent for my business trip. Fast wifi, comfortable workspace, and the staff was very accommodating for my late check-in. Only downside was the breakfast selection was somewhat limited.",12,4.7,4.6,4.8,4.3,true,en,US,true,direct
-REV123457,HTL7890,USR98765,3.2,2025-03-12,5,family,suite,"Mixed experience with kids","The suite was spacious and the pool was great for the children. However, we found the restaurant options lacking for kids and the air conditioning in our room was inconsistent at best.",3,4.1,3.2,4.5,3.0,true,en,CA,false,booking.com
-REV123458,HTL2345,USR11223,5.0,2025-03-10,7,couple,standard,"Perfect anniversary getaway","Absolutely wonderful experience from start to finish. The sunset views from our room were breathtaking, and the special anniversary package they arranged made our stay unforgettable. Every staff member went above and beyond.",28,5.0,5.0,4.9,4.8,true,en,UK,true,expedia
-EOF
-```
+You can find the sample data in the test_file folder. JMeter will use KLoadGen to loop over the sample data, so you can use a single line of data without any issues. No need to worry!
 
 ### 8. Create Kafka Topics
 
@@ -106,6 +98,8 @@ EOF
 # JSON Topic
 ./kafka-topics.sh --create --topic hotel-json --partitions 72 --replication-factor 1 --bootstrap-server localhost:19092
 ```
+
+### Note: You can use my other Kafka setup to deploy 3 Kafka brokers for real testing. 
 
 ## Running the Test
 
