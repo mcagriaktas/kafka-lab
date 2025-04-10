@@ -121,14 +121,3 @@ If you encounter SLF4J binding issues, install the required JAR:
 ```bash
 wget https://repo1.maven.org/maven2/org/slf4j/slf4j-simple/1.7.36/slf4j-simple-1.7.36.jar -P ./apache-jmeter-5.6.3/lib
 ```
-
-## Key Considerations
-
-- **Serialization Performance**: Compare throughput between Avro and JSON formats
-- **Message Size**: Monitor the difference in serialized message sizes
-- **CPU Usage**: Observe CPU utilization during high-throughput testing
-- **Schema Evolution**: Test compatibility with schema changes (advanced usage)
-
-## License
-
-[Your License Here]
