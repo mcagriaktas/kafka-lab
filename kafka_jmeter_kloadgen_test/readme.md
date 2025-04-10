@@ -32,7 +32,8 @@ Compare the performance between Avro and JSON serialization in Kafka with a real
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/mcagriaktas/kafka-container-setup.git
+cd kafka-container-setup/kakfa_jmeter_kloadgen_test
 ```
 
 ### 2. Create Docker Network
