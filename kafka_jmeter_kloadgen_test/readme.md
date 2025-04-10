@@ -25,14 +25,7 @@ Compare the performance between Avro and JSON serialization in Kafka with a real
 
 ## Architecture
 
-```
-┌─────────────┐      ┌────────────────┐     ┌───────────────────┐
-│             │      │                │     │                   │
-│   JMeter    │────▶│  Kafka Broker  │────▶│  Schema Registry  │
-│  + KLoadGen │      │                │     │                   │
-│             │      │                │     │                   │
-└─────────────┘      └────────────────┘     └───────────────────┘
-```
+![image](https://github.com/user-attachments/assets/79fc8983-1366-4868-926f-4817a75051db)
 
 ## Setup Instructions
 
