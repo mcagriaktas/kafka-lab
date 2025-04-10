@@ -83,7 +83,7 @@ http://localhost:8081/subjects/hoteldata_json-value/versions
 ```
 
 ### 7. Create Sample Data
-You can find the sample data in the test_file folder. JMeter will use KLoadGen to loop over the sample data, so you can use a single line of data without any issues. No need to worry!
+You can find the `sample data` in the `test_file folder`. `JMeter will use KLoadGen to loop over the sample data`, so you can use a single line of data without any issues. No need to worry!
 
 ### 8. Create Kafka Topics
 
