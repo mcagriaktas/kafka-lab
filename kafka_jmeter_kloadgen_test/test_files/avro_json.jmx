@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Kafka Producers">
+        <intProp name="ThreadGroup.num_threads">50</intProp>
+        <intProp name="ThreadGroup.ramp_time">30</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">10000</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <GaussianRandomTimer guiclass="GaussianRandomTimerGui" testclass="GaussianRandomTimer" testname="Gaussian Random Timer">
+          <stringProp name="ConstantTimer.delay">5</stringProp>
+          <stringProp name="RandomTimer.range">5</stringProp>
+        </GaussianRandomTimer>
+        <hashTree/>
+        <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer">
+          <intProp name="calcMode">2</intProp>
+          <doubleProp>
+            <name>throughput</name>
+            <value>1000.0</value>
+            <savedValue>0.0</savedValue>
+          </doubleProp>
+        </ConstantThroughputTimer>
+        <hashTree/>
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Avro Producer">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="bootstrap.servers" elementType="Argument">
+                <stringProp name="Argument.name">bootstrap.servers</stringProp>
+                <stringProp name="Argument.value">localhost:19092</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="zookeeper.servers" elementType="Argument">
+                <stringProp name="Argument.name">zookeeper.servers</stringProp>
+                <stringProp name="Argument.value">&lt;Zookeeper List&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="kafka.topic.name" elementType="Argument">
+                <stringProp name="Argument.name">kafka.topic.name</stringProp>
+                <stringProp name="Argument.value">avro1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="compression.type" elementType="Argument">
+                <stringProp name="Argument.name">compression.type</stringProp>
+                <stringProp name="Argument.value">none</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="batch.size" elementType="Argument">
+                <stringProp name="Argument.name">batch.size</stringProp>
+                <stringProp name="Argument.value">16384</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="linger.ms" elementType="Argument">
+                <stringProp name="Argument.name">linger.ms</stringProp>
+                <stringProp name="Argument.value">0</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="buffer.memory" elementType="Argument">
+                <stringProp name="Argument.name">buffer.memory</stringProp>
+                <stringProp name="Argument.value">33554432</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="acks" elementType="Argument">
+                <stringProp name="Argument.name">acks</stringProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="send.buffer.bytes" elementType="Argument">
+                <stringProp name="Argument.name">send.buffer.bytes</stringProp>
+                <stringProp name="Argument.value">131072</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="receive.buffer.bytes" elementType="Argument">
+                <stringProp name="Argument.name">receive.buffer.bytes</stringProp>
+                <stringProp name="Argument.value">32768</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="security.protocol" elementType="Argument">
+                <stringProp name="Argument.name">security.protocol</stringProp>
+                <stringProp name="Argument.value">PLAINTEXT</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="kerberos.auth.enabled" elementType="Argument">
+                <stringProp name="Argument.name">kerberos.auth.enabled</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="jaas.enabled" elementType="Argument">
+                <stringProp name="Argument.name">jaas.enabled</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="java.security.auth.login.config" elementType="Argument">
+                <stringProp name="Argument.name">java.security.auth.login.config</stringProp>
+                <stringProp name="Argument.value">&lt;JAAS File Location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="java.security.krb5.conf" elementType="Argument">
+                <stringProp name="Argument.name">java.security.krb5.conf</stringProp>
+                <stringProp name="Argument.value">&lt;krb5.conf location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="sasl.kerberos.service.name" elementType="Argument">
+                <stringProp name="Argument.name">sasl.kerberos.service.name</stringProp>
+                <stringProp name="Argument.value">kafka</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="sasl.mechanism" elementType="Argument">
+                <stringProp name="Argument.name">sasl.mechanism</stringProp>
+                <stringProp name="Argument.value">GSSAPI</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.enabled" elementType="Argument">
+                <stringProp name="Argument.name">ssl.enabled</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.key.password" elementType="Argument">
+                <stringProp name="Argument.name">ssl.key.password</stringProp>
+                <stringProp name="Argument.value">&lt;Key Password&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keystore.location" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keystore.location</stringProp>
+                <stringProp name="Argument.value">&lt;Keystore Location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keystore.password" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keystore.password</stringProp>
+                <stringProp name="Argument.value">&lt;Keystore Password&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.truststore.location" elementType="Argument">
+                <stringProp name="Argument.name">ssl.truststore.location</stringProp>
+                <stringProp name="Argument.value">&lt;Truststore Location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.truststore.password" elementType="Argument">
+                <stringProp name="Argument.name">ssl.truststore.password</stringProp>
+                <stringProp name="Argument.value">&lt;Truststore Password&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="client.id" elementType="Argument">
+                <stringProp name="Argument.name">client.id</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="security.providers" elementType="Argument">
+                <stringProp name="Argument.name">security.providers</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.enabled.protocols" elementType="Argument">
+                <stringProp name="Argument.name">ssl.enabled.protocols</stringProp>
+                <stringProp name="Argument.value">TLSv1.2,TLSv1.3</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.endpoint.identification.algorithm" elementType="Argument">
+                <stringProp name="Argument.name">ssl.endpoint.identification.algorithm</stringProp>
+                <stringProp name="Argument.value">https</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keymanager.algorithm" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keymanager.algorithm</stringProp>
+                <stringProp name="Argument.value">SunX509</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keystore.type" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keystore.type</stringProp>
+                <stringProp name="Argument.value">JKS</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.provider" elementType="Argument">
+                <stringProp name="Argument.name">ssl.provider</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.protocol" elementType="Argument">
+                <stringProp name="Argument.name">ssl.protocol</stringProp>
+                <stringProp name="Argument.value">TLSv1.3</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="auto.register.schemas" elementType="Argument">
+                <stringProp name="Argument.name">auto.register.schemas</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="apicurio.avro.confluent.compatibility" elementType="Argument">
+                <stringProp name="Argument.name">apicurio.avro.confluent.compatibility</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="apicurio.avro.header.id" elementType="Argument">
+                <stringProp name="Argument.name">apicurio.avro.header.id</stringProp>
+                <stringProp name="Argument.value">YES</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">com.sngular.kloadgen.sampler.KafkaProducerSampler</stringProp>
+        </JavaSampler>
+        <hashTree>
+          <com.sngular.kloadgen.config.valueserialized.ValueSerializedConfigElement guiclass="TestBeanGUI" testclass="com.sngular.kloadgen.config.valueserialized.ValueSerializedConfigElement" testname="KLG - Value Schema Serializer Config">
+            <stringProp name="valueNameStrategy">com.sngular.kloadgen.strategy.RecordSubjectNameStrategy</stringProp>
+            <collectionProp name="valueSchemaProperties">
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">review_id</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">hotel_id</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">user_id</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">rating</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">float</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">review_date</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">stay_duration</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">int</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">traveler_type</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">room_type</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">title</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">review_text</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">helpful_votes</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">int</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">location_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">float</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">service_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">float</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">cleanliness_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">float</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">value_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">float</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">is_verified</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">boolean</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">language</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">country_origin</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">has_response</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">boolean</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">booking_channel</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">true</boolProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="valueSchemaType">AVRO</stringProp>
+            <stringProp name="valueSerializerConfiguration">com.sngular.kloadgen.serializer.AvroSerializer</stringProp>
+            <stringProp name="valueSubjectName">hoteldata_avro-value</stringProp>
+          </com.sngular.kloadgen.config.valueserialized.ValueSerializedConfigElement>
+          <hashTree/>
+          <com.sngular.kloadgen.config.schemaregistry.SchemaRegistryConfigElement guiclass="TestBeanGUI" testclass="com.sngular.kloadgen.config.schemaregistry.SchemaRegistryConfigElement" testname="Schema Registry Config Element">
+            <stringProp name="schemaRegistryName">Confluent</stringProp>
+            <collectionProp name="schemaRegistryProperties">
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.auth.enabled</stringProp>
+                <stringProp name="propertyValue">NO</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.auth.method</stringProp>
+                <stringProp name="propertyValue">BASIC</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.username</stringProp>
+                <stringProp name="propertyValue">&lt;username&gt;</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.password</stringProp>
+                <stringProp name="propertyValue">&lt;password&gt;</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.bearer</stringProp>
+                <stringProp name="propertyValue">&lt;bearer&gt;</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.keystore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.keystore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.truststore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.truststore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.keystore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.keystore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.truststore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.truststore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="schemaRegistryUrl">http://localhost:8081</stringProp>
+          </com.sngular.kloadgen.config.schemaregistry.SchemaRegistryConfigElement>
+          <hashTree/>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config">
+            <stringProp name="delimiter">,</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="filename">/home/cagri/projects/kafka/jmeter_kafka_test/test_files/hotedata.csv</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="variableNames"></stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Json Producer">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="bootstrap.servers" elementType="Argument">
+                <stringProp name="Argument.name">bootstrap.servers</stringProp>
+                <stringProp name="Argument.value">localhost:19092</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="zookeeper.servers" elementType="Argument">
+                <stringProp name="Argument.name">zookeeper.servers</stringProp>
+                <stringProp name="Argument.value">&lt;Zookeeper List&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="kafka.topic.name" elementType="Argument">
+                <stringProp name="Argument.name">kafka.topic.name</stringProp>
+                <stringProp name="Argument.value">json1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="compression.type" elementType="Argument">
+                <stringProp name="Argument.name">compression.type</stringProp>
+                <stringProp name="Argument.value">none</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="batch.size" elementType="Argument">
+                <stringProp name="Argument.name">batch.size</stringProp>
+                <stringProp name="Argument.value">16384</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="linger.ms" elementType="Argument">
+                <stringProp name="Argument.name">linger.ms</stringProp>
+                <stringProp name="Argument.value">0</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="buffer.memory" elementType="Argument">
+                <stringProp name="Argument.name">buffer.memory</stringProp>
+                <stringProp name="Argument.value">33554432</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="acks" elementType="Argument">
+                <stringProp name="Argument.name">acks</stringProp>
+                <stringProp name="Argument.value">1</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="send.buffer.bytes" elementType="Argument">
+                <stringProp name="Argument.name">send.buffer.bytes</stringProp>
+                <stringProp name="Argument.value">131072</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="receive.buffer.bytes" elementType="Argument">
+                <stringProp name="Argument.name">receive.buffer.bytes</stringProp>
+                <stringProp name="Argument.value">32768</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="security.protocol" elementType="Argument">
+                <stringProp name="Argument.name">security.protocol</stringProp>
+                <stringProp name="Argument.value">PLAINTEXT</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="kerberos.auth.enabled" elementType="Argument">
+                <stringProp name="Argument.name">kerberos.auth.enabled</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="jaas.enabled" elementType="Argument">
+                <stringProp name="Argument.name">jaas.enabled</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="java.security.auth.login.config" elementType="Argument">
+                <stringProp name="Argument.name">java.security.auth.login.config</stringProp>
+                <stringProp name="Argument.value">&lt;JAAS File Location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="java.security.krb5.conf" elementType="Argument">
+                <stringProp name="Argument.name">java.security.krb5.conf</stringProp>
+                <stringProp name="Argument.value">&lt;krb5.conf location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="sasl.kerberos.service.name" elementType="Argument">
+                <stringProp name="Argument.name">sasl.kerberos.service.name</stringProp>
+                <stringProp name="Argument.value">kafka</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="sasl.mechanism" elementType="Argument">
+                <stringProp name="Argument.name">sasl.mechanism</stringProp>
+                <stringProp name="Argument.value">GSSAPI</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.enabled" elementType="Argument">
+                <stringProp name="Argument.name">ssl.enabled</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.key.password" elementType="Argument">
+                <stringProp name="Argument.name">ssl.key.password</stringProp>
+                <stringProp name="Argument.value">&lt;Key Password&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keystore.location" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keystore.location</stringProp>
+                <stringProp name="Argument.value">&lt;Keystore Location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keystore.password" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keystore.password</stringProp>
+                <stringProp name="Argument.value">&lt;Keystore Password&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.truststore.location" elementType="Argument">
+                <stringProp name="Argument.name">ssl.truststore.location</stringProp>
+                <stringProp name="Argument.value">&lt;Truststore Location&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.truststore.password" elementType="Argument">
+                <stringProp name="Argument.name">ssl.truststore.password</stringProp>
+                <stringProp name="Argument.value">&lt;Truststore Password&gt;</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="client.id" elementType="Argument">
+                <stringProp name="Argument.name">client.id</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="security.providers" elementType="Argument">
+                <stringProp name="Argument.name">security.providers</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.enabled.protocols" elementType="Argument">
+                <stringProp name="Argument.name">ssl.enabled.protocols</stringProp>
+                <stringProp name="Argument.value">TLSv1.2,TLSv1.3</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.endpoint.identification.algorithm" elementType="Argument">
+                <stringProp name="Argument.name">ssl.endpoint.identification.algorithm</stringProp>
+                <stringProp name="Argument.value">https</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keymanager.algorithm" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keymanager.algorithm</stringProp>
+                <stringProp name="Argument.value">SunX509</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.keystore.type" elementType="Argument">
+                <stringProp name="Argument.name">ssl.keystore.type</stringProp>
+                <stringProp name="Argument.value">JKS</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.provider" elementType="Argument">
+                <stringProp name="Argument.name">ssl.provider</stringProp>
+                <stringProp name="Argument.value"></stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="ssl.protocol" elementType="Argument">
+                <stringProp name="Argument.name">ssl.protocol</stringProp>
+                <stringProp name="Argument.value">TLSv1.3</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="auto.register.schemas" elementType="Argument">
+                <stringProp name="Argument.name">auto.register.schemas</stringProp>
+                <stringProp name="Argument.value">false</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="apicurio.avro.confluent.compatibility" elementType="Argument">
+                <stringProp name="Argument.name">apicurio.avro.confluent.compatibility</stringProp>
+                <stringProp name="Argument.value">NO</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="apicurio.avro.header.id" elementType="Argument">
+                <stringProp name="Argument.name">apicurio.avro.header.id</stringProp>
+                <stringProp name="Argument.value">YES</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">com.sngular.kloadgen.sampler.KafkaProducerSampler</stringProp>
+        </JavaSampler>
+        <hashTree>
+          <com.sngular.kloadgen.config.valueserialized.ValueSerializedConfigElement guiclass="TestBeanGUI" testclass="com.sngular.kloadgen.config.valueserialized.ValueSerializedConfigElement" testname="KLG - Value Schema Serializer Config">
+            <stringProp name="valueNameStrategy">com.sngular.kloadgen.strategy.RecordSubjectNameStrategy</stringProp>
+            <collectionProp name="valueSchemaProperties">
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">review_id</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">country_origin</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">booking_channel</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">hotel_id</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">rating</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">language</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">location_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">has_response</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">boolean</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">title</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">helpful_votes</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">is_verified</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">boolean</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">review_date</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">timestamp</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">cleanliness_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">user_id</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">true</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">service_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">stay_duration</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">traveler_type</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">review_text</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">room_type</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">string</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+              <elementProp name="" elementType="com.sngular.kloadgen.model.FieldValueMapping">
+                <stringProp name="fieldName">value_score</stringProp>
+                <intProp name="valueLength">0</intProp>
+                <stringProp name="fieldType">number</stringProp>
+                <stringProp name="fieldValuesList"></stringProp>
+                <boolProp name="required">false</boolProp>
+                <boolProp name="ancestorRequired">false</boolProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="valueSchemaType">JSON</stringProp>
+            <stringProp name="valueSerializerConfiguration">com.sngular.kloadgen.serializer.GenericJsonRecordSerializer</stringProp>
+            <stringProp name="valueSubjectName">hoteldata_json-value</stringProp>
+          </com.sngular.kloadgen.config.valueserialized.ValueSerializedConfigElement>
+          <hashTree/>
+          <com.sngular.kloadgen.config.schemaregistry.SchemaRegistryConfigElement guiclass="TestBeanGUI" testclass="com.sngular.kloadgen.config.schemaregistry.SchemaRegistryConfigElement" testname="Schema Registry Config Element">
+            <stringProp name="schemaRegistryName">Confluent</stringProp>
+            <collectionProp name="schemaRegistryProperties">
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.auth.enabled</stringProp>
+                <stringProp name="propertyValue">NO</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.auth.method</stringProp>
+                <stringProp name="propertyValue">BASIC</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.username</stringProp>
+                <stringProp name="propertyValue">&lt;username&gt;</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.password</stringProp>
+                <stringProp name="propertyValue">&lt;password&gt;</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.bearer</stringProp>
+                <stringProp name="propertyValue">&lt;bearer&gt;</stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.keystore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.keystore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.truststore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">schema.registry.ssl.truststore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.keystore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.keystore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.truststore.location</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+              <elementProp name="Config properties" elementType="com.sngular.kloadgen.model.PropertyMapping" testname="Config properties">
+                <stringProp name="propertyName">ssl.truststore.password</stringProp>
+                <stringProp name="propertyValue"></stringProp>
+              </elementProp>
+            </collectionProp>
+            <stringProp name="schemaRegistryUrl">http://localhost:8081</stringProp>
+          </com.sngular.kloadgen.config.schemaregistry.SchemaRegistryConfigElement>
+          <hashTree/>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config">
+            <stringProp name="delimiter">,</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="filename">/home/cagri/projects/kafka/jmeter_kafka_test/test_files/hotedata.csv</stringProp>
+            <boolProp name="ignoreFirstLine">false</boolProp>
+            <boolProp name="quotedData">false</boolProp>
+            <boolProp name="recycle">true</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+            <boolProp name="stopThread">false</boolProp>
+            <stringProp name="variableNames"></stringProp>
+          </CSVDataSet>
+          <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>true</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

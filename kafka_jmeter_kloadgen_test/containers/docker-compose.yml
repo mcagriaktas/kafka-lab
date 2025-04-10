@@ -1,0 +1,32 @@
+services:
+  kafka:
+    container_name: kafka
+    build:
+      context: images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./config/kafka/server.properties:/opt/kafka/config/server.properties
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka-schema-registry:
+    build:
+      context: images/kafka-schema-registry/.
+      dockerfile: Dockerfile
+    container_name: kafka-schema-registry
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./config/kafka-schema-registry/schema-registry.properties:/opt/schema-registry/etc/schema-registry/schema-registry.properties
+    depends_on:
+      - kafka
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+
+networks:
+  dahbest:
+    external: true
