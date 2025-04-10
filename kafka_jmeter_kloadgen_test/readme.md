@@ -2,10 +2,6 @@
 
 This project demonstrates how to perform performance testing on Apache Kafka using JMeter with Avro and JSON serialization formats. The demo includes a complete setup with Docker containers for Kafka and Schema Registry, along with tools to generate and measure message throughput.
 
-## Overview
-
-Compare the performance between Avro and JSON serialization in Kafka with a realistic testing environment. This project helps data engineers evaluate serialization formats and benchmark Kafka deployments before moving to production.
-
 ## Features
 
 - Docker containers for Kafka and Confluent Schema Registry
