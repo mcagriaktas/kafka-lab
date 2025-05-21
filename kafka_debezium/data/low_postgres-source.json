@@ -1,0 +1,29 @@
+{
+  "name": "postgres-source",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "topic.prefix": "dbserver1",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "cagri",
+    "database.password": "3541",
+    "database.dbname": "postgres",
+    "schema.include.list": "public",
+    "table.include.list": "public.low_customers",
+    "plugin.name": "pgoutput",
+    "slot.name": "debezium",
+    "publication.name": "dbz_publication",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false", 
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.add.fields": "op:deleted",
+    "transforms.unwrap.add.fields.prefix": "__",
+    "transforms.unwrap.operation.rewrite": "d:true,c:false,r:false,u:false"
+  }
+}

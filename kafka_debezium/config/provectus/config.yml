@@ -1,0 +1,15 @@
+kafka:
+  clusters:
+    - name: cagri_cluster
+      bootstrapServers: kafka1:9092,kafka2:9092,kafka3:9092
+
+      kafkaConnect:
+        - name: debezium
+          address: http://debezium:8083
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO

@@ -1,0 +1,36 @@
+{
+  "name": "postgres-source",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "tasks.max": "1",
+    "topic.prefix": "dbserver1",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "cagri",
+    "database.password": "3541",
+    "database.dbname": "postgres",
+    "schema.include.list": "public",
+    "table.include.list": "public.high_customers",
+    "plugin.name": "pgoutput",
+    "slot.name": "debezium_high_customers",
+    "publication.name": "dbz_high_customers_pub",
+    
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "false",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    
+    "tombstones.on.delete": "true",
+    "decimal.handling.mode": "precise",
+    
+    "publication.autocreate.mode": "filtered",
+    "debezium.snapshot.mode": "initial",
+    
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.delete.handling.mode": "rewrite",
+    "transforms.unwrap.add.fields": "op,source.ts_ms:source_ts_ms,source.db:db,source.schema:schema,source.table:table,source.txId:txId,source.lsn:lsn",
+    "transforms.unwrap.add.fields.prefix": "__"
+  }
+}

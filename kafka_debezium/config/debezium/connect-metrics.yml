@@ -1,0 +1,6 @@
+lowercaseOutputLabelNames: true
+rules:
+- pattern: "kafka.connect<type=connect-worker-metrics>([^:]+):"
+  name: "kafka_connect_worker_$1"
+- pattern: "debezium.([^:]+)<>([^:]+):"
+  name: "debezium_$1_$2"

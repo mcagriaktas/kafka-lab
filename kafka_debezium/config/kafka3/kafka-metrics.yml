@@ -1,0 +1,84 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+
+rules:
+  # Throughput Metrics
+  - pattern: "kafka.server<type=BrokerTopicMetrics,name=MessagesInPerSec,topic=(.+)><>OneMinuteRate"
+    name: kafka_server_topic_messages_in_rate
+    type: GAUGE
+    labels:
+      topic: "$1"
+
+  - pattern: "kafka.server<type=BrokerTopicMetrics,name=BytesInPerSec,topic=(.+)><>OneMinuteRate"
+    name: kafka_server_topic_bytes_in_rate
+    type: GAUGE
+    labels:
+      topic: "$1"
+
+  - pattern: "kafka.server<type=BrokerTopicMetrics,name=BytesOutPerSec,topic=(.+)><>OneMinuteRate"
+    name: kafka_server_topic_bytes_out_rate
+    type: GAUGE
+    labels:
+      topic: "$1"
+
+  # Consumer Lag Metrics
+  - pattern: 'kafka.server:type=FetcherLagMetrics,name=ConsumerLag,clientId=([-.\w]+),topic=([-.\w]+),partition=([0-9]+)'
+    name: kafka_server_consumer_lag
+    type: GAUGE
+    labels:
+      client_id: "$1"
+      topic: "$2"
+      partition: "$3"
+
+  # Replica Lag Metrics
+  - pattern: "kafka.server<type=ReplicaFetcherManager, name=MaxLag, clientId=(.+)><>Value"
+    name: kafka_server_replica_max_lag
+    type: GAUGE
+    labels:
+      client_id: "$1"
+
+  # Controller Metrics
+  - pattern: "kafka.controller<type=KafkaController, name=(.+)><>Value"
+    name: kafka_controller_$1
+    type: GAUGE
+
+  # Group Coordinator Metrics
+  - pattern: "kafka.coordinator.group<type=GroupMetadataManager, name=NumGroups><>Value"
+    name: kafka_coordinator_num_groups
+    type: GAUGE
+
+  - pattern: "kafka.coordinator.group<type=GroupMetadataManager, name=NumOffsets><>Value"
+    name: kafka_coordinator_num_offsets
+    type: GAUGE
+
+  # Topic and Partition Metrics
+  - pattern: "kafka.log<type=Log, name=Size, topic=(.+), partition=(.+)><>Value"
+    name: kafka_log_size
+    type: GAUGE
+    labels:
+      topic: "$1"
+      partition: "$2"
+
+  # Aggregated Broker Metrics
+  - pattern: "kafka.server<type=BrokerTopicMetrics, name=(.+)><>Count"
+    name: kafka_server_broker_metrics_count
+    type: COUNTER
+    labels:
+      metric_name: "$1"
+
+  # Broker Status Metric
+  - pattern: "kafka.server:type=app-info,id=(.+)"
+    name: kafka_broker_status
+    type: GAUGE
+    value: 1
+    labels:
+      broker_id: "$1"
+        
+  # JVM Metrics
+  - pattern: "java.lang<type=Memory>HeapMemoryUsage"
+    name: kafka_jvm_memory_heap
+    type: GAUGE
+
+  - pattern: "java.lang<type=OperatingSystem>([^:]+):"
+    name: kafka_os_$1
+    type: GAUGE
