@@ -1,4 +1,4 @@
-# MULTI-KAFKA-DOCKER-SETUP
+# KAFKA-PLATFORM-LAB
 
 ## ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
 # ⚠️ UNDER MAINTENANCE ⚠️
