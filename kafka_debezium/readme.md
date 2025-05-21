@@ -29,6 +29,8 @@ Debezium is not a Kafka connector itself—it's a Java application that uses Kaf
 'd' → Delete (a row was deleted)
 ```
 
+<img width="1920" alt="json_output" src="https://github.com/user-attachments/assets/65eb3abe-23b7-436e-aca9-739ebdba3d15" />
+
 ### 2. For Docker Deployment:
 Add this to your container's command or entrypoint:
 ```bash
@@ -50,6 +52,10 @@ host    replication     all             0.0.0.0/0               md5
 ```
 
 ## How to run the deployment:
+
+### When the Containers Are Built and Running:
+
+<img width="1920" alt="main-topics" src="https://github.com/user-attachments/assets/1a965c51-d6e5-4e7d-bb6a-631aa0d7d818" />
 
 ### 1. Setup the Database for Debezium
 ```bash
@@ -99,6 +105,8 @@ VALUES
 curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" \
   http://localhost:8083/connectors/ -d @data/high_postgres-source.json
 ```
+
+<img width="1772" alt="kafka-ui" src="https://github.com/user-attachments/assets/c92808fe-9148-4701-9f1b-06794c2a7ec8" />
 
 ### ⚠️ 3.1 Delete existing connector if needed
 ```bash
