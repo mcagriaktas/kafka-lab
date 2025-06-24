@@ -1,0 +1,54 @@
+context: "stage"
+source: "team-a"
+
+projects:
+  # Team A Topics
+  - name: "teamA"
+    topics:
+      - name: "user-events"
+        config:
+          num.partitions: "6"
+          replication.factor: "3"
+          retention.ms: "604800000"  # 7 days
+          cleanup.policy: "delete"
+          compression.type: "lz4"
+          
+      - name: "clickstream"
+        config:
+          num.partitions: "12"
+          replication.factor: "3"
+          retention.ms: "259200000"  # 3 days
+          cleanup.policy: "delete"
+          
+      - name: "processed-events"
+        config:
+          num.partitions: "6"
+          replication.factor: "3"
+          retention.ms: "1209600000"  # 14 days
+          cleanup.policy: "delete"
+          
+      - name: "analytics-results"
+        config:
+          num.partitions: "3"
+          replication.factor: "3"
+          retention.ms: "2592000000"  # 30 days
+          cleanup.policy: "delete"
+
+  # Team B Topics
+  - name: "teamB"
+    topics:
+      - name: "payment-requests"
+        config:
+          num.partitions: "8"
+          replication.factor: "3"
+          retention.ms: "2592000000"  # 30 days
+          cleanup.policy: "delete"
+          min.insync.replicas: "2"
+          
+      - name: "payment-confirmations"
+        config:
+          num.partitions: "4"
+          replication.factor: "3"
+          retention.ms: "7776000000"  # 90 days
+          cleanup.policy: "delete"
+          min.insync.replicas: "2"

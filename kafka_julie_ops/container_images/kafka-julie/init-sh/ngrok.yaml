@@ -1,0 +1,12 @@
+version: "2"
+authtoken: ngrok_token
+tunnels:
+  app:
+    proto: http
+    addr: localhost:8090
+    schemes: [http]
+    inspect: true
+web_addr: 0.0.0.0:4040
+log_level: info
+log_format: json
+log: /opt/ngrok_tunnel/logs/ngrok.log
