@@ -1,4 +1,4 @@
-# KAFKA-PLATFORM-LAB
+# KAFKA-LAB
 
 ## ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
 # ⚠️ UNDER MAINTENANCE ⚠️
