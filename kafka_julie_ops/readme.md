@@ -2,7 +2,9 @@
 
 Manage Kafka topologies (topics, ACLs, configs, Consumer Groups etc.) using GitOps principles with JulieOps. This demo shows how to automate Kafka configuration through Git workflows with branch-based environments.
 
-> **Medium Article**: [How to Manage Kafka Topology with JulieOps](https://medium.com/p/your-article-link)
+> **Medium Article**: [How to Manage Kafka Topology with JulieOps]([https://medium.com/p/your-article-link](https://medium.com/@mucagriaktas/how-to-manage-kafka-topology-with-julieops-4903594b0307))
+
+![image](https://github.com/user-attachments/assets/af496444-7f3b-4e74-aeaf-2f8b9602aef0)
 
 ## ⚡️ Core Features
 - Declarative Kafka configuration via YAML files
