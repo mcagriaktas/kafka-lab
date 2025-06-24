@@ -1,0 +1,15 @@
+context: "dev"
+source: "team-a"
+
+projects:
+  - name: "dev-topic"
+    topics:
+      - name: "dev-topic"
+        config:
+          num.partitions: "3"
+          replication.factor: "3"
+          retention.ms: "86400000"
+          cleanup.policy: "delete"
+          compression.type: "gzip"
+          compression.gzip.level: "9"
+          min.insync.replicas: "2"

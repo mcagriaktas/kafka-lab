@@ -1,0 +1,11 @@
+context: "prod"
+source: "team-a"
+
+projects:
+  - name: "prod-topic"
+    topics:
+      - name: "prod-topic"
+        config:
+          num.partitions: "3"
+          replication.factor: "3"
+          retention.ms: "86400000"
