@@ -4,7 +4,7 @@
 # ⚠️ UNDER MAINTENANCE ⚠️
 ## ⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️⚠️
 
-<img width="1024" height="1024" alt="kafka-lab-icon" src="https://github.com/user-attachments/assets/ed69edf1-a774-4e4e-9bf3-c7c68aae92d5" />
+<img width="512" height="512" alt="kafka-lab-icon" src="https://github.com/user-attachments/assets/ed69edf1-a774-4e4e-9bf3-c7c68aae92d5" />
 
 
 Hello everyone! This repository contains multi versions of Kafka along with a Kafka migration, upgrade and mirrormaker demo container. Each setup has its own folder with a dedicated README file, providing detailed instructions for setup and configuration.
