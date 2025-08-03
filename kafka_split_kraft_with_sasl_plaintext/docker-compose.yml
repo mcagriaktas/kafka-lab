@@ -1,0 +1,126 @@
+services:
+  broker1:
+    container_name: broker1
+    hostname: broker1
+    build:
+      context: ./images/kafka/broker/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./configs/kafka/broker1/broker.properties:/opt/kafka/config/broker.properties
+      - ./configs/kafka/broker1/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
+      - ./configs/kafka/broker1/admin_client.conf:/opt/kafka/config/admin_client.conf
+      - ./logs/kafka/broker1/data/:/opt/data/
+      - ./logs/kafka/broker1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  broker2:
+    container_name: broker2
+    hostname: broker2
+    build:
+      context: ./images/kafka/broker/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+    volumes:
+      - ./configs/kafka/broker2/broker.properties:/opt/kafka/config/broker.properties
+      - ./configs/kafka/broker2/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
+      - ./configs/kafka/broker2/admin_client.conf:/opt/kafka/config/admin_client.conf
+      - ./logs/kafka/broker2/data/:/opt/data/
+      - ./logs/kafka/broker2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  broker3:
+    container_name: broker3
+    hostname: broker3
+    build:
+      context: ./images/kafka/broker/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+    volumes:
+      - ./configs/kafka/broker3/broker.properties:/opt/kafka/config/broker.properties
+      - ./configs/kafka/broker3/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
+      - ./configs/kafka/broker3/admin_client.conf:/opt/kafka/config/admin_client.conf
+      - ./logs/kafka/broker3/data/:/opt/data/
+      - ./logs/kafka/broker3/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  controller1:
+    container_name: controller1
+    hostname: controller1
+    build:
+      context: ./images/kafka/controller/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/kafka/controller1/controller.properties:/opt/kafka/config/controller.properties
+      - ./configs/kafka/controller1/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
+      - ./configs/kafka/controller1/admin_client.conf:/opt/kafka/config/admin_client.conf
+      - ./logs/kafka/controller1/data/:/opt/data/
+      - ./logs/kafka/controller1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.21
+
+  controller2:
+    container_name: controller2
+    hostname: controller2
+    build:
+      context: ./images/kafka/controller/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/kafka/controller2/controller.properties:/opt/kafka/config/controller.properties
+      - ./configs/kafka/controller2/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
+      - ./configs/kafka/controller2/admin_client.conf:/opt/kafka/config/admin_client.conf
+      - ./logs/kafka/controller2/data/:/opt/data/
+      - ./logs/kafka/controller2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.22
+
+  controller3:
+    container_name: controller3
+    hostname: controller3
+    build:
+      context: ./images/kafka/controller/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/kafka/controller3/controller.properties:/opt/kafka/config/controller.properties
+      - ./configs/kafka/controller3/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
+      - ./configs/kafka/controller3/admin_client.conf:/opt/kafka/config/admin_client.conf
+      - ./logs/kafka/controller3/data/:/opt/data/
+      - ./logs/kafka/controller3/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.23
+
+  kafka-ui:
+    container_name: kafka-ui
+    build:
+      context: ./images/provectus/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs/provectus/config.yml:/opt/config.yml
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.17
+    depends_on:
+      - broker1
+      - broker2
+      - broker3
+      - controller1
+      - controller2
+      - controller3
+      
+networks:
+  dahbest:
+    external: true

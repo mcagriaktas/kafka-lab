@@ -1,0 +1,131 @@
+services:
+  kafka1:
+    container_name: kafka1
+    hostname: kafka1
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+      - '9308:9308'
+      - '7071:7071'
+    volumes:
+      - ./configs/kafka/kafka1/server.properties:/opt/kafka/config/server.properties
+      - ./configs/kafka/kafka1/kafka-metrics.yml:/opt/jmx_exporter/kafka-metrics.yml
+      - ./logs/kafka/kafka1/data/:/opt/data/
+      - ./logs/kafka/kafka1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    hostname: kafka2
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+      - '7072:7071'
+    volumes:
+      - ./configs/kafka/kafka2/server.properties:/opt/kafka/config/server.properties
+      - ./configs/kafka/kafka2/kafka-metrics.yml:/opt/jmx_exporter/kafka-metrics.yml
+      - ./logs/kafka/kafka2/data:/opt/data/
+      - ./logs/kafka/kafka2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka3:
+    container_name: kafka3
+    hostname: kafka3
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+      - '7073:7071'
+    volumes:
+      - ./configs/kafka/kafka3/server.properties:/opt/kafka/config/server.properties
+      - ./configs/kafka/kafka3/kafka-metrics.yml:/opt/jmx_exporter/kafka-metrics.yml
+      - ./logs/kafka/kafka3/data:/opt/data/
+      - ./logs/kafka/kafka3/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  kafka-schema-registry:
+    build:
+      context: images/kafka-schema-registry/.
+      dockerfile: Dockerfile
+    container_name: kafka-schema-registry
+    ports:
+      - "18081:18081"
+    volumes:
+      - ./configs/kafka-schema-registry/schema-registry.properties:/opt/schema-registry/etc/schema-registry/schema-registry.properties
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+
+  kafka-ui:
+    container_name: kafka-ui
+    build:
+      context: ./images/provectus/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs/provectus/config.yml:/mnt/config.yml
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.16
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka-schema-registry
+
+  prometheus:
+    container_name: prometheus
+    build:
+      context: ./images/prometheus/.
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./logs/prometheus/:/prometheus/data
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.15
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+  grafana:
+    container_name: grafana
+    build:
+      context: ./images/grafana
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./configs/grafana/grafana.ini:/opt/grafana/confs/grafana.ini
+      - ./configs/grafana/provisioning/datasources/:/opt/grafana/provisioning/datasources/
+      - ./configs/grafana/provisioning/dashboards/:/opt/grafana/provisioning/dashboards/
+      - ./logs/grafana/logs:/opt/grafana/logs
+      - ./logs/grafana/data:/opt/grafana/data
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.20
+    depends_on:
+      - prometheus
+
+networks:
+  dahbest:
+    external: true

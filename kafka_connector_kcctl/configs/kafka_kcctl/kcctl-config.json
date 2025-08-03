@@ -1,0 +1,7 @@
+{
+  "currentContext": "local",
+  "local": {
+    "cluster": "http://kafka-connector:8083",
+    "bootstrap-servers": "kafka1:9092,kafka:9092,kafka3:9092"
+  }
+}

@@ -1,0 +1,49 @@
+services:
+  kafka-0:
+    container_name: kafka-0
+    build:
+      context: ./images
+      dockerfile: Dockerfile
+    environment:
+      pod_name: kafka-0
+      replicas: 3
+      cluster_id: EP6hyiddQNW5FPrAvR9kWw
+    ports:
+      - '19092:19092'
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka-1:
+    container_name: kafka-1
+    build:
+      context: ./images
+      dockerfile: Dockerfile
+    environment:
+      pod_name: kafka-1
+      replicas: 3
+      cluster_id: EP6hyiddQNW5FPrAvR9kWw
+    ports:
+      - '29092:29092'
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka-2:
+    container_name: kafka-2
+    build:
+      context: ./images
+      dockerfile: Dockerfile
+    environment:
+      pod_name: kafka-2
+      replicas: 3
+      cluster_id: EP6hyiddQNW5FPrAvR9kWw
+    ports:
+      - '39092:39092'
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+networks:
+  dahbest:
+    external: true

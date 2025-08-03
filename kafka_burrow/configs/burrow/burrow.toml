@@ -1,0 +1,43 @@
+[client-profile.profile]
+kafka-version="4.0.0"
+client-id="cagri-burrow"
+
+[cluster.local]
+client-profile="profile"
+class-name="kafka"
+servers=[ "kafka1:9092", "kafka2:9092", "kafka3:9092" ]
+topic-refresh=60
+offset-refresh=5
+groups-reaper-refresh=30
+
+[consumer.local]
+class-name="kafka"
+cluster="local"
+servers=[ "kafka1:9092", "kafka2:9092", "kafka3:9092" ]
+group-denylist=""
+group-allowlist=""
+
+[storage.mystorage]
+class-name="inmemory"
+intervals=10
+expire-group=604800
+workers=20
+min-distance=1
+group-allowlist=".*"
+
+[httpserver.default]
+address=":8000"
+
+[logging]
+filename="/opt/logs/burrow.log"
+level="info"
+maxsize=10000
+maxbackups=30
+maxage=10
+use-localtime=false
+use-compression=true
+
+# [sasl.mysaslprofile]
+# username="myname"
+# password="sekrit"
+# handshake-first=false

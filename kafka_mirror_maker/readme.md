@@ -1,184 +1,95 @@
-# Kafka Migration Guide: ZooKeeper to KRaft
+# Kafka MirrorMaker 2
 
-This guide demonstrates how to migrate from a ZooKeeper-based Kafka cluster to KRaft mode using MirrorMaker 2. The process includes setting up both Kafka versions and migrating data between them. Note that while ACLs (Access Control Lists) can be migrated using MirrorMaker 2, this demo focuses on the basic migration without SASL/SSL security configurations.
+This repository offers a comprehensive lab environment for exploring active/passive Kafka replication using MirrorMaker 2. It supports various multi-cluster topologies and includes a modern management UI, making it easy to visualize and control your replication setup.
 
-## Prerequisites
+With this project, you can effortlessly simulate cross-cluster replication scenarios, test failover and recovery strategies, and observe the flow of messages between Kafka clusters in real time. The environment allows you to study how MirrorMaker 2 handles replication across clusters, manage topics and offsets, and experiment with different configurations.
 
-### Kafka and Zookeeper Version:
-| Component          | Version |
-|--------------------|---------|
-| new_kafka          | 3.8.0   |
-| old_kafka          | 3.1.0   |
-| Zookeeper          | 3.7.2   |
+This setup is ideal for developers, operators, and architects who want to gain hands-on experience with Kafka replication, validate disaster recovery plans, or analyze the behavior of distributed streaming systems under different network and cluster conditions. Everything needed to get started—including configuration files and monitoring tools—is provided for a smooth and insightful testing experience.
 
-- Docker and Docker Compose installed
-- Basic understanding of Apache Kafka
-- Sufficient disk space for logs and data
+---
 
-## Quick Start
+📁 Project Structure
+```
+.
+├── configs/
+│   ├── kafka/
+│   │   ├── kafka1-a/ ... kafka3-b/      # Cluster A & B broker configs
+│   ├── mirror_maker_properties/
+│   │   ├── mm2-a.properties
+│   │   ├── mm2-active-passive.properties
+│   │   └── mm2-sasl_ssl_to_plain.properties
+│   └── provectus/
+│       └── config.yml
+├── data_generator/
+│   ├── producer.py
+│   └── consumer.py
+├── docker-compose.yml
+├── images/
+│   ├── kafka/
+│   │   ├── Dockerfile
+│   │   └── init-sh/
+│   │       ├── kafka-export-starter.sh
+│   │       └── kafka-starter.sh
+│   └── provectus/
+│       ├── Dockerfile
+│       └── init-sh/
+│           └── kafka-ui-starter.sh
 
-### Pull The kafka-migrate-upgrade-test Container (Optional)
-
-```bash
-services:
-  kafka:
-    images: mucagriaktas/kafka-demo-container:v1
-    container_name: kafka
-    stdin_open: true
-    tty: true   
-    volumes:
-      - ./home/config:/mnt/config
-    command: /bin/bash
 ```
 
-Check the readme in DockerHub: [https://hub.docker.com/repository/docker/mucagriaktas/kafka-migration-test/general](https://hub.docker.com/repository/docker/mucagriaktas/kafka-migration-test/general)
+---
 
-1. Start the ubuntu (kafka) container:
-```bash
-docker-compose up -d --build
-```
+## 🌐 Key Endpoints
 
-2. Access the container:
-```bash
-docker exec -it kafka bash
-```
+| Service        | URL / Command                                   | Purpose                       |
+|----------------|-------------------------------------------------|-------------------------------|
+| Kafka UI       | [http://localhost:8080](http://localhost:8080)  | Topic and cluster management  |
+| Source Kafka   | kafka{1,2,3}:9092, EXTERNAL: 19092, 29092, 39093| Cluster A brokers             |
+| Dest Kafka     | kafka{1,2,3}:9092, EXTERNAL: 19091, 29091, 39091| Cluster B brokers             |
+| MirrorMaker2   | CLI only                                        | See MM2 configs in `/configs/mirror_maker_properties` |
 
-3. You can find all kafka and zookeeper files in:
-```bash
-cd /mnt
-```
+---
 
-## Configuration Steps
+## What is MirrorMaker 2?
+Kafka MirrorMaker 2 (MM2) is the official tool for replicating topics, configs, and even consumer groups across Kafka clusters.
+This repo is pre-configured for active/passive replication—simulating disaster recovery, region failover, or cross-datacenter pipelines.
+  - Active/Passive: All writes go to Cluster A. MM2 keeps Cluster B synchronized as a backup.
+  - You can also test SASL_SSL to PLAINTEXT bridging and multi-cluster DR scenarios. (NOT SUPPORT THE DEPLOYMENT)
 
-### 1. KRaft Kafka Setup (3.8.0)
+---
 
-1. Configure `server.properties` for KRaft mode (`/config/kraft/server.properties`):
-```bash
-listeners=PLAINTEXT://:9094,CONTROLLER://:9093
-advertised.listeners=PLAINTEXT://localhost:9094
-log.dirs=/mnt/all_logs/kafka
-```
+1. **Start the clusters:**
+    ```bash
+    docker-compose up -d --build
+    ```
 
-2. Generate cluster ID:
-```bash
-./mnt/kafka_2.13-3.8.0/bin/kafka-storage.sh format \
-    --config /mnt/kafka_2.13-3.8.0/config/kraft/server.properties \
-    --cluster-id U2TYzXg8Q2ODk3o0eiW6YQ \
-    --ignore-formatted
-```
+2. **Create topics on Cluster A using Kafka UI or CLI:**
+    ```bash
+    docker exec -it kafka1-a /opt/kafka/bin/kafka-topics.sh --create --topic cagri-topic --bootstrap-server kafka1-a:9092,kafka2-a:9092,kafka3-a:9092 --partitions 3 --replication-factor 2 --config min.insync.replicas=2
+    ```
 
-### 2. ZooKeeper Configuration (3.7.2)
+3. **Run data generator scripts:**
+    ```bash
+    python data_generator/producer.py
+    ```
 
-Create and configure `zoo.cfg` (`/mnt/apache-zookeeper-3.7.2-bin/conf/zoo.cfg`):
-```bash
-tickTime=2000
-dataDir=/mnt/all_logs/zookeeper_data
-clientPort=2181
-initLimit=10
-syncLimit=5
-```
+4. **Start MirroMaker2:**
+    ```bash
+    docker exec -it kafka1-a /opt/kafka/bin/connect-mirror-maker.sh /opt/kafka/config/mm2-active-passive.properties
+    ```
 
-### 3. MirrorMaker 2 Configuration
+5. **Check missing or dublicate data with scritps:**
+    ```bash
+    python data_generator/consumer.py
+    ```
 
-Create `mm2.properties` (`/mnt/mm2.properties`):
-```bash
-# Cluster aliases
-clusters = source, destination
+---
 
-# Connection information
-source.bootstrap.servers = localhost:9092
-destination.bootstrap.servers = localhost:9094
-
-# Replication flow
-source->destination.enabled = true
-source->destination.topics = topic.*
-source->destination.groups = .*
-
-# Topic blacklist
-topics.blacklist="*.internal,__.*"
-
-# Replication factors
-replication.factor=1
-checkpoints.topic.replication.factor=1
-heartbeats.topic.replication.factor=1
-offset-syncs.topic.replication.factor=1
-offset.storage.replication.factor=1
-status.storage.replication.factor=1
-config.storage.replication.factor=1
-
-# Replication policy
-replication.policy.class = org.apache.kafka.connect.mirror.IdentityReplicationPolicy
-```
-
-## Migration Process
-
-### 1. Start ZooKeeper-based Kafka
-
-1. Start ZooKeeper:
-```bash
-./mnt/apache-zookeeper-3.7.2-bin/bin/zkServer.sh start
-```
-
-2. Start Kafka (ZooKeeper version):
-```bash
-./mnt/kafka_2.13-3.1.0/bin/kafka-server-start.sh /mnt/kafka_2.13-3.1.0/config/server.properties
-```
-
-### 2. Create Test Data
-
-1. Create a test topic:
-```bash
-./mnt/kafka_2.13-3.1.0/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --topic topic1
-```
-
-2. Produce test messages:
-```bash
-./mnt/kafka_2.13-3.1.0/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic topic1
-```
-
-3. Verify messages:
-```bash
-./mnt/kafka_2.13-3.1.0/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic1 --from-beginning
-```
-
-### 3. Start KRaft Kafka
-
-Start the KRaft version:
-```bash
-./mnt/kafka_2.13-3.8.0/bin/kafka-server-start.sh /mnt/kafka_2.13-3.8.0/config/kraft/server.properties
-```
-
-### 4. Run MirrorMaker 2
-
-Start the migration:
-```bash
-./mnt/kafka_2.13-3.8.0/bin/connect-mirror-maker.sh /mnt/mm2.properties
-```
-
-### 5. Cleanup
-
-1. Stop MirrorMaker 2:
-```bash
-# Press Ctrl+C in the MirrorMaker 2 terminal
-```
-
-2. Stop the old Kafka cluster:
-```bash
-# Press Ctrl+C in the old Kafka terminal
-```
-
-3. Stop ZooKeeper:
-```bash
-lsof -i :2181
-kill -p <PID_ID>
-```
-
-## Post-Migration Steps
-
-1. Verify data consistency between old and new clusters
-2. Update client applications to use the new Kafka cluster endpoints
-3. Remove ZooKeeper-related configurations
-4. Archive or delete old cluster data as needed
+📝 Notes & Tips
+ - Replication works one-way (active→passive) by default, but you can enable bidirectional or advanced topologies.
+ - All broker config paths and volume mounts are defined in docker-compose.yml.
+ - The Kafka UI lets you inspect both clusters and replicated topics.
+ - Custom startup scripts are in each image’s init-sh/ folder.
 
 ## References
 

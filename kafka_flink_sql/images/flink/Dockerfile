@@ -1,39 +1,54 @@
-FROM openjdk:11-jre
+FROM openjdk:17-slim-bullseye
 
 # Set Flink version (https://downloads.apache.org/flink/)
-ENV FLINK_VERSION=1.19.0
-ENV SCALA_VERSION=2.12
-ENV FLINK_CONNECTOR_KAFKA_VERSION=3.4.0
+ENV FLINK_VERSION=2.0.0
+ENV KAFKA_FLINK_VERSION=4.0.0-2.0
+ENV FLINK_HOME=/opt/flink
+ENV FLINK_LIB_HOME=${FLINK_HOME}/lib
 
 RUN apt-get update && \
-    apt-get install -y wget tar && \
+    apt-get install -y wget curl netcat procps net-tools iputils-ping && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -P /opt https://downloads.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_${SCALA_VERSION}.tgz && \
-    tar -xzf /opt/flink-${FLINK_VERSION}-bin-scala_${SCALA_VERSION}.tgz -C /opt/ && \
-    rm /opt/flink-${FLINK_VERSION}-bin-scala_${SCALA_VERSION}.tgz && \
-    mv /opt/flink-${FLINK_VERSION} /opt/flink && \
-    mkdir /opt/flink/catalog
+# Flink Binary 
+RUN wget -P /opt https://downloads.apache.org/flink/flink-${FLINK_VERSION}/flink-${FLINK_VERSION}-bin-scala_2.12.tgz && \
+    tar -xzf /opt/flink-${FLINK_VERSION}-bin-scala_2.12.tgz -C /opt/ && \
+    rm /opt/flink-${FLINK_VERSION}-bin-scala_2.12.tgz && \
+    mv /opt/flink-${FLINK_VERSION} ${FLINK_HOME} && \
+    mkdir ${FLINK_HOME}/catalog
 
-# Flink Kafka Connector (https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka)
-RUN wget https://downloads.apache.org/flink/flink-connector-kafka-${FLINK_CONNECTOR_KAFKA_VERSION}/flink-connector-kafka-${FLINK_CONNECTOR_KAFKA_VERSION}-src.tgz && \
-    tar -xzf flink-connector-kafka-${FLINK_CONNECTOR_KAFKA_VERSION}-src.tgz -C /opt/flink/lib/ && \
-    rm flink-connector-kafka-${FLINK_CONNECTOR_KAFKA_VERSION}-src.tgz
+# Flink Stream and SQL
+RUN wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-streaming-java/${FLINK_VERSION}/flink-streaming-java-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-sql-client/${FLINK_VERSION}/flink-sql-client-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-sql-gateway/${FLINK_VERSION}/flink-sql-gateway-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \ 
+    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-json/${FLINK_VERSION}/flink-json-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-connector-base/${FLINK_VERSION}/flink-connector-base-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME}
 
-RUN wget -q https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/3.4.0/kafka-clients-3.4.0.jar -P /opt/flink/lib/ && \
-    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/3.3.0-1.19/flink-connector-kafka-3.3.0-1.19.jar -P /opt/flink/lib/ && \
-    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-streaming-scala_2.12/1.19.0/flink-streaming-scala_2.12-1.19.0.jar -P /opt/flink/lib/ && \
-    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-sql-client/1.19.0/flink-sql-client-1.19.0.jar -P /opt/flink/lib/ && \
-    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-sql-gateway/1.19.0/flink-sql-gateway-1.19.0.jar -P /opt/flink/opt/ && \ 
-    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-json/1.19.0/flink-json-1.19.0.jar -P /opt/flink/opt/
+# Flink Kafka Connectors (FLINK 2.0)
+RUN wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-sql-connector-kafka/${KAFKA_FLINK_VERSION}/flink-sql-connector-kafka-${KAFKA_FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-connector-kafka/${KAFKA_FLINK_VERSION}/flink-connector-kafka-${KAFKA_FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/org/apache/kafka/kafka-clients/4.0.0/kafka-clients-4.0.0.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/com/google/guava/guava/33.4.8-jre/guava-33.4.8-jre.jar -P ${FLINK_LIB_HOME} 
 
-ENV FLINK_HOME=/opt/flink
-ENV PATH=$PATH:$FLINK_HOME/bin
-RUN chmod 777 -R /opt/flink
+# Flink Prometheus Connector and system metrics dependencies
+RUN wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-metrics-prometheus/${FLINK_VERSION}/flink-metrics-prometheus-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/com/github/oshi/oshi-core/6.4.4/oshi-core-6.4.4.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.13.0/jna-platform-5.13.0.jar -P ${FLINK_LIB_HOME} && \
+    wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-metrics-jmx/1.20.0/flink-metrics-jmx-1.20.0.jar -P ${FLINK_LIB_HOME}
 
+# RocksDB state backend
+RUN wget -q https://repo1.maven.org/maven2/org/apache/flink/flink-statebackend-rocksdb/${FLINK_VERSION}/flink-statebackend-rocksdb-${FLINK_VERSION}.jar -P ${FLINK_LIB_HOME}
+
+RUN mkdir -p ${FLINK_HOME}/flink-state/flink-checkpoints && \
+    mkdir -p ${FLINK_HOME}/flink-state/flink-savepoints && \
+    mkdir -p ${FLINK_HOME}/sql_query_list && \
+    chmod 777 -R ${FLINK_HOME}
+    
+RUN chmod 777 -R ${FLINK_HOME}
 WORKDIR $FLINK_HOME
 
-COPY init-sh/starter-flink.sh ./
-RUN chmod +x starter-flink.sh
+COPY init-sh/flink-starter.sh /usr/bin
+RUN chmod +x /usr/bin/flink-starter.sh
 
-ENTRYPOINT ["./starter-flink.sh"]
+ENTRYPOINT [ "flink-starter.sh" ]

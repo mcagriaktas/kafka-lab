@@ -1,0 +1,117 @@
+services:
+  kafka1:
+    container_name: kafka1
+    hostname: kafka1
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./configs/kafka/kafka1/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka1/metadata/:/opt/data/
+      - ./logs/kafka/kafka1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    hostname: kafka2
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+    volumes:
+      - ./configs/kafka/kafka2/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka2/metadata:/opt/data/
+      - ./logs/kafka/kafka2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka3:
+    container_name: kafka3
+    hostname: kafka3
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+    volumes:
+      - ./configs/kafka/kafka3/server.properties:/opt/kafka/config/server.properties   
+      - ./logs/kafka/kafka3/metadata:/opt/data/
+      - ./logs/kafka/kafka3/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  kafka-ui:
+    container_name: kafka-ui
+    build:
+      context: ./images/provectus/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs/provectus/config.yml:/mnt/config.yml:ro
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+  kafka-connector:
+    container_name: kafka-connector
+    build:
+      context: ./images/kafka_connector/.
+      dockerfile: Dockerfile
+    ports:
+      - '8083:8083'
+    volumes:
+      - ./configs/kafka_connector/connect-distributed.properties:/opt/kafka/config/connect-distributed.properties
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.25
+    depends_on:
+      - kafka3 
+      - kafka2
+      - kafka1
+      - couchbase
+
+  kafka-kcctl:
+    container_name: kafka-kcctl
+    build:
+      context: ./images/kafka_kcctl/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/kafka_kcctl/connector_json:/opt/kafka_kcctl/connector_json/
+      - ./configs/kafka_kcctl/kcctl-config.json:/opt/kafka_kcctl/kcctl-config.json
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.27
+    depends_on:
+      - kafka3 
+      - kafka2
+      - kafka1
+      - couchbase
+      - kafka-connector
+
+  couchbase:
+    container_name: couchbase
+    image: couchbase/server:7.6.4
+    ports:
+      - "8091-8096:8091-8096"
+      - "11210-11211:11210-11211"
+    volumes:
+      - ./logs/couchbase/:/opt/couchbase/var/lib/couchbase/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.60
+
+networks:
+  dahbest:
+    external: true

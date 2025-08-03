@@ -1,0 +1,89 @@
+services:
+  kafka1:
+    container_name: kafka1
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./configs/kafka/kafka1/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka1/data/:/opt/data/
+      - ./logs/kafka/kafka1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+    volumes:
+      - ./configs/kafka/kafka2/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka2/data/:/opt/data/
+      - ./logs/kafka/kafka2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka3:
+    container_name: kafka3
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+    volumes:
+      - ./configs/kafka/kafka3/server.properties:/opt/kafka/config/server.properties    
+      - ./logs/kafka/kafka3/data:/opt/data/
+      - ./logs/kafka/kafka3/logs:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  cruise-control:
+    container_name: cruise-control
+    build:
+      context: ./images/cruise-control/.
+      dockerfile: Dockerfile
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./configs/cruise-control/cruisecontrol.properties:/opt/cruise-control/config/cruisecontrol.properties
+      - ./configs/cruise-control/brokerSets.json:/opt/cruise-control/config/brokerSets.json
+      - ./configs/cruise-control/clusterConfigs.json:/opt/cruise-control/config/clusterConfigs.json
+      - ./configs/cruise-control/capacityJBOD.json:/opt/cruise-control/config/capacityJBOD.json
+      - ./configs/cruise-control/capacityCores.json:/opt/cruise-control/config/capacityCores.json
+      - ./configs/cruise-control/capacity.json:/opt/cruise-control/config/capacity.json
+      - ./logs/cruise-control:/opt/cruise-control/logs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.18
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+  cruise-control-ui:
+    container_name: cruise-control-ui
+    build:
+      context: ./images/cruise-control-ui
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/cruise-control-ui/config.csv:/usr/share/nginx/html/static/config.csv
+      - ./configs/cruise-control-ui/cruise-control-ui.conf:/etc/nginx/conf.d/default.conf
+      - ./logs/cruise-control-ui/:/var/log/nginx/
+    ports:
+      - '8090:8090'
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.19
+    depends_on:
+      - cruise-control
+      
+networks:
+  dahbest:
+    external: true

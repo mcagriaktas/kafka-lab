@@ -1,68 +1,93 @@
-# Debezium
+# Debezium + PostgreSQL CDC Example
 
-In this deployment, you can easily find a working Debezium setup and see how to use it with PostgreSQL. Other CDC (Change Data Capture) connectors are also easy to use—just download the appropriate .jar file and configure the *-source.json file.
+This repository offers a ready-to-run environment for demonstrating Change Data Capture (CDC) from PostgreSQL to Kafka using Debezium. The setup is designed to make it easy to explore real-time data streaming and CDC patterns, with full support for other Debezium CDC connectors—simply add the necessary JAR file and source configuration for your use case.
 
-### 🔧 Project Component Versions & Configuration
+Out of the box, the stack provides everything you need to capture database changes from PostgreSQL and stream them to Kafka topics. It also includes a Kafka UI, making it simple to monitor topics, inspect events, and manage your CDC pipeline visually. Sample consumer applications are included for quick and easy testing, allowing you to see captured changes in action without extra configuration.
 
-| Component             | Description                    | Version         | Port/Details                              |
-| --------------------- | ------------------------------ | --------------- | ----------------------------------------- |
-| Kafka                 | Distributed event streaming platform (3-node cluster)          | 4.0.0           | Default: 9092                             |
-| Scala                 | Required by Kafka              | 2.13            |                                           |
-| Debezium              | CDC platform for Kafka Connect | 3.1.1.Final     | Uses Kafka Connect                        |
-| Kafka UI (Provectus)  | Web interface for Kafka management          | v0.7.2          | Default: 8080                             |
-| PostgreSQL            | Source DB for CDC              | 16              | User: cagri, Port: 3541, DB: postgres |
+This project is ideal for developers and data engineers who want to learn about CDC, experiment with Debezium’s connectors, or build real-time data pipelines between relational databases and Kafka. With minimal setup, you can observe how changes in your PostgreSQL database are instantly reflected in Kafka, and expand the environment to support additional CDC sources as needed.
 
-## 🔑 Key Points:
-By following all the steps, you'll understand what Debezium is and why people use it. When you need to capture real-time changes (like INSERT, UPDATE, or DELETE) from a database, Debezium works perfectly with Kafka to stream that data.
+---
 
-But keep in mind:
-Debezium is not a Kafka connector itself—it's a Java application that uses Kafka Connect under the hood to stream database changes.
+## 📁 Project Structure
 
-### 1. What's mean op:'c', op:'r', op:'u', op:'d':
-```bash
-'c' → Create (a new row was inserted)
-
-'r' → Read (a snapshot read; happens during the initial snapshot phase)
-
-'u' → Update (an existing row was updated)
-
-'d' → Delete (a row was deleted)
+```
+.
+├── configs/                        # Service configurations
+│   ├── kafka/                      # Kafka broker configs
+│   ├── debezium/                   # Debezium connector configs (source JSONs)
+│   └── postgres/                   # PostgreSQL init/config scripts
+├── data_generator/                 # Python consumer, example scripts
+│   ├── debeizum_consumer.py        # Python consumer for CDC topics
+│   └── high_postgres-source.json   # Example Debezium connector config
+├── docker-compose.yml              # Orchestration for the stack
+├── images/                         # Custom images if any
+├── logs/                           # Logs from running containers
+├── screenshots/                    # Docs and UI screenshots
+└── README.md
 ```
 
-<img width="1920" alt="json_output" src="https://github.com/user-attachments/assets/65eb3abe-23b7-436e-aca9-739ebdba3d15" />
+---
 
-### 2. For Docker Deployment:
-Add this to your container's command or entrypoint:
-```bash
-command: ["postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=10", "-c", "max_replication_slots=10"]   
+## 🌐 Key Endpoints
+
+| Service           | URL                                  | Notes / Credentials                      |
+|-------------------|--------------------------------------|------------------------------------------|
+| **Kafka UI**      | [http://localhost:8080](http://localhost:8080) | Provectus UI, browse topics, view data   |
+| **Kafka Connect** | [http://localhost:8083](http://localhost:8083) | REST API for connector registration      |
+| **PostgreSQL**    | Host: `localhost`, Port: `3541`      | User: `cagri`, DB: `postgres`, PW: `35413541` |
+
+---
+
+## 📊 What is Debezium?
+
+[**Debezium**](https://debezium.io/) is an open-source CDC platform that captures row-level changes (INSERT/UPDATE/DELETE) from your databases and streams them into Kafka topics in real time.  
+- Built as a set of Kafka Connect connectors.
+- Makes it easy to build event-driven applications, replicate data, and maintain audit trails.
+
+**Operation types (`op`):**
+```
+'c' – Create (insert)
+'r' – Read (snapshot row, initial snapshot phase)
+'u' – Update
+'d' – Delete
 ```
 
-### 3. For Linux Deployment:
-Update the `postgresql.conf` file (usually located at `/etc/postgresql/{version}/main/postgresql.conf` or `/var/lib/pgsql/data/postgresql.conf`):
+---
+
+## ⚡ Quick Start
+
+### 1. Start the Stack
+
 ```bash
+docker-compose up -d
+```
+
+### 2. Ensure PostgreSQL is CDC-ready
+
+**Docker:**  
+Add this to the container `command` or `entrypoint`:
+```bash
+command: ["postgres", "-c", "wal_level=logical", "-c", "max_wal_senders=10", "-c", "max_replication_slots=10"]
+```
+
+**Linux:**  
+Edit `postgresql.conf`:
+```conf
 wal_level = logical
 max_wal_senders = 10
 max_replication_slots = 10
 ```
-
-Then, allow replication connections by adding a line to `pg_hba.conf`:
-```bash
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
+And in `pg_hba.conf`, add:
+```
 host    replication     all             0.0.0.0/0               md5
 ```
 
-## How to run the deployment:
+### 3. Initialize Database
 
-### When the Containers Are Built and Running:
-
-<img width="1920" alt="main-topics" src="https://github.com/user-attachments/assets/1a965c51-d6e5-4e7d-bb6a-631aa0d7d818" />
-
-### 1. Setup the Database for Debezium
 ```bash
-# Connect to PostgreSQL
 docker exec -it postgres psql -U cagri -d postgres
 
-# Create a test table
+-- Create test table
 CREATE TABLE high_customers (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100),
@@ -71,7 +96,7 @@ CREATE TABLE high_customers (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-# Create a function to update the updated_at timestamp
+-- Create trigger to auto-update `updated_at`
 CREATE OR REPLACE FUNCTION update_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -80,74 +105,93 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-# Create a trigger to call the function
 CREATE TRIGGER update_customers_timestamp
 BEFORE UPDATE ON high_customers
 FOR EACH ROW
 EXECUTE FUNCTION update_timestamp();
 
-# Enable full replica identity to capture before values
+-- Enable full replica identity for CDC
 ALTER TABLE high_customers REPLICA IDENTITY FULL;
 
-# Verify replica identity setting
+-- (Verify with)
 SELECT relname, relreplident FROM pg_class WHERE relname = 'high_customers';
-# Should return 'f' for FULL
 
-# Insert initial data
-INSERT INTO high_customers (name, email) 
-VALUES 
+-- Insert sample data
+INSERT INTO high_customers (name, email) VALUES
   ('Cagri Dahbest', 'asdasdasd@example.com'),
   ('Hazel Dahbest', 'asdasdassssd@example.com');
 ```
 
-### 3. Register the Debezium PostgreSQL connector
+### 4. Register the Debezium PostgreSQL Connector
+
 ```bash
-curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" \
-  http://localhost:8083/connectors/ -d @data/high_postgres-source.json
+curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" http://localhost:8083/connectors/ -d @data_generator/high_postgres-source.json
 ```
 
-<img width="1772" alt="kafka-ui" src="https://github.com/user-attachments/assets/c92808fe-9148-4701-9f1b-06794c2a7ec8" />
-
-### ⚠️ 3.1 Delete existing connector if needed
+**Delete existing connector (if needed):**
 ```bash
-⚠️ curl -X DELETE http://localhost:8083/connectors/postgres-source
+curl -X DELETE http://localhost:8083/connectors/postgres-source
 ```
 
-### 4. Check connector status
+**Check connector status:**
 ```bash
 curl -s http://localhost:8083/connectors/postgres-source/status | jq
 ```
 
-### 5. Open two terminal panels and start both consumers to observe the changes in real time:
-```bash
-# Python consumer to easily observe changes in the database table and Kafka topics!
-python data/debeizum_consumer.py
+### 5. Observe CDC Events
 
-# Listen to the topic where PostgreSQL changes will be published
-docker exec -it kafka1 /opt/kafka/bin/kafka-console-consumer.sh \
-  --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 \
-  --topic dbserver1.public.high_customers \
-  --from-beginning
-```
+Open **two terminals**:
 
-### 6. Update, Delete and Insert (op:'c', op:'r', op:'u', op:'d')
+- **Python consumer (pretty-print JSON):**
+  ```bash
+  python data_generator/debeizum_consumer.py
+  ```
+
+- **Kafka console consumer (raw view):**
+  ```bash
+  docker exec -it kafka1 /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 --topic dbserver1.public.high_customers --from-beginning
+  ```
+
+### 6. Make Some Changes!
+
 ```bash
-# Connect to PostgreSQL
 docker exec -it postgres psql -U cagri -d postgres
 
-# Make updates to see before/after values
 UPDATE high_customers SET email = 'mucagriaktas@gmail.com' WHERE id = 1;
 UPDATE high_customers SET name = 'Cagri A. Dahbest' WHERE id = 1;
 UPDATE high_customers SET email = 'hazeldahbest@gmail.com' WHERE id = 2;
-
-# Delete a record to test delete events
 DELETE FROM high_customers WHERE id = 2;
-
-# Insert a new record to test insert events
 INSERT INTO high_customers (name, email) VALUES ('New User', 'new@example.com');
 ```
 
-## Docs:
+Check your consumers to see the corresponding `op: 'c' | 'u' | 'd'` messages.
 
-- [Debezium PostgreSQL](https://debezium.io/documentation/reference/1.9/connectors/postgresql.html)
-- [Debezium Offical Docker Demo](https://debezium.io/documentation/reference/stable/tutorial.html)
+---
+
+## 🛠️ Customization
+
+- **Add new CDC source:**  
+  Drop in another connector JAR, create a new `*-source.json` file, register it using the Connect REST API.
+- **Change topics, table names, or DB settings:**  
+  Edit `high_postgres-source.json` and PostgreSQL schema as needed.
+- **Monitor with Kafka UI:**  
+  Browse and inspect messages on all topics at [http://localhost:8080](http://localhost:8080).
+
+---
+
+## 📝 Notes & Tips
+
+- Always **enable `REPLICA IDENTITY FULL`** for any table where you want Debezium to capture update/delete "before" images.
+- Debezium supports **many other DBs** (MySQL, SQL Server, MongoDB, Oracle, etc.)—just use the relevant connector JAR and config.
+- Sample **screenshots** in the `/screenshots` folder.
+
+---
+
+## 📚 References
+
+- [Debezium PostgreSQL Connector](https://debezium.io/documentation/reference/1.9/connectors/postgresql.html)
+- [Debezium Official Docker Demo](https://debezium.io/documentation/reference/stable/tutorial.html)
+- [Kafka Connect Documentation](https://kafka.apache.org/documentation/#connect)
+- [Provectus Kafka UI](https://github.com/provectus/kafka-ui)
+
+---

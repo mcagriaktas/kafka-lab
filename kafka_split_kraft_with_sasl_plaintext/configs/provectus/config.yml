@@ -1,0 +1,15 @@
+kafka:
+  clusters:
+    - name: cagri_cluster
+      bootstrapServers: broker1:9092,broker2:9092,broker3:9092
+      properties:
+        security.protocol: SASL_PLAINTEXT
+        sasl.mechanism: PLAIN
+        sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="kafkaui" password="cagri3541";
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO

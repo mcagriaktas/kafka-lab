@@ -1,0 +1,14 @@
+{
+    "connector.class": "com.couchbase.connect.kafka.CouchbaseSinkConnector",
+    "tasks.max": "1",
+    "topics": "couchbase-topic",
+    "couchbase.seed.nodes": "172.80.0.60",
+    "couchbase.bucket": "cagri-bucket",
+    "couchbase.username": "cagri",
+    "couchbase.password": "35413541",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+    "couchbase.document.id": "/id",
+    "couchbase.collection": "_default._default"
+}

@@ -1,0 +1,105 @@
+services:
+  kafka1:
+    container_name: kafka1
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    ports:
+      - "19092:19092"
+    volumes:
+      - ./configs/kafka/kafka1/:/mnt/properties
+    command: /bin/bash
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.10
+
+  zookeeper1:
+    container_name: zookeeper1
+    hostname: zookeeper1
+    build:
+      context: ./images/zookeeper/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/zookeeper/zoo.cfg:/mnt/apache-zookeeper-3.7.2-bin/conf/zoo.cfg
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    ports:
+      - "29092:29092"   
+    volumes:
+      - ./configs/kafka/kafka2/:/mnt/properties
+    command: /bin/bash
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  zookeeper2:
+    container_name: zookeeper2
+    hostname: zookeeper2
+    build:
+      context: ./images/zookeeper/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/zookeeper/zoo.cfg:/mnt/apache-zookeeper-3.7.2-bin/conf/zoo.cfg
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  kafka3:
+    container_name: kafka3
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true   
+    ports:
+      - "39092:39092"
+    volumes:
+      - ./configs/kafka/kafka3/:/mnt/properties
+    command: /bin/bash
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+
+  zookeeper3:
+    container_name: zookeeper3
+    hostname: zookeeper3
+    build:
+      context: ./images/zookeeper/.
+      dockerfile: Dockerfile 
+    volumes:
+      - ./configs/zookeeper/zoo.cfg:/mnt/apache-zookeeper-3.7.2-bin/conf/zoo.cfg
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.15
+
+  kafka-ui:
+    container_name: kafka-ui
+    build:
+      context: ./images/provectus/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs/provectus/config.yml:/mnt/config.yml:ro
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.16
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      
+networks:
+  dahbest: 
+    external: true

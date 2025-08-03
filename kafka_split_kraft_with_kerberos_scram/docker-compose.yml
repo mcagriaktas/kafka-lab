@@ -1,0 +1,92 @@
+services:
+  broker:
+    container_name: broker
+    hostname: broker
+    user: kafka
+    build:
+      context: ./images/kafka/broker/.
+      dockerfile: Dockerfile
+    ports:
+      - "9092:9092"
+      - "19092:19092"
+    volumes:
+      - ./configs/kafka/broker/broker.properties:/opt/kafka/config/kraft/broker.properties:ro
+      - ./configs/kafka/kafka-keys:/opt/kafka/config/kraft/keys
+      - ./configs/keytabs/kafka-keytabs:/opt/kafka/config/kraft/keytabs
+      - ./logs/broker/logs:/opt/kafka/logs
+      - ./logs/broker/metadata:/kafka/kraft-broker-logs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.10
+    extra_hosts:
+      - "controller:172.80.0.11"
+      - "kerberos:172.80.0.12"
+    depends_on:
+      - kerberos
+
+  controller:
+    container_name: controller
+    hostname: controller
+    user: kafka
+    build:
+      context: ./images/kafka/controller/.
+      dockerfile: Dockerfile
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./configs/kafka/controller/controller.properties:/opt/kafka/config/kraft/controller.properties:ro
+      - ./configs/kafka/kafka-keys:/opt/kafka/config/kraft/keys
+      - ./configs/keytabs/kafka-keytabs:/opt/kafka/config/kraft/keytabs
+      - ./logs/controller/logs:/opt/kafka/logs
+      - ./logs/controller/metadata:/kafka/kraft-controller-logs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+    extra_hosts:
+      - "broker:172.80.0.10"
+      - "kerberos:172.80.0.12"
+    depends_on:
+      - kerberos
+
+  kerberos:
+    container_name: kerberos
+    hostname: kerberos
+    build:
+      context: ./images/kerberos/.
+      dockerfile: Dockerfile
+    ports:
+      - "88:88/udp"
+      - "749:749/tcp"
+    volumes:
+      - ./logs/kerberos:/var/lib/krb5kdc
+      - ./configs/keytabs/kafka-keytabs:/keytabs/kafka-keytabs
+      - ./configs/keytabs/client-keytabs:/keytabs/client-keytabs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+    extra_hosts:
+      - "broker:172.80.0.10"
+      - "controller:172.80.0.11"
+
+  client:
+    container_name: client
+    hostname: client
+    build:
+      context: ./images/client/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/client:/mnt/home
+      - ./configs/keytabs/client-keytabs:/mnt/keytabs
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+    extra_hosts:
+      - "broker:172.80.0.10"
+      - "controller:172.80.0.11"
+      - "kerberos:172.80.0.12"
+    depends_on:
+      - kerberos
+
+networks:
+  dahbest:
+    external: true

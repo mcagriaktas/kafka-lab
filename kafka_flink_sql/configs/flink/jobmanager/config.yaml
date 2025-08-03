@@ -1,0 +1,108 @@
+# JobManager config.yaml
+
+# JobManager configuration
+jobmanager.rpc.address: jobmanager        
+jobmanager.rpc.port: 6123
+jobmanager.bind-host: 0.0.0.0             
+jobmanager.memory.process.size: 4gb         
+
+# Web UI - Changed for external access
+rest.port: 8081
+rest.address: 0.0.0.0                     
+rest.bind-port: 8081
+rest.bind-address: 0.0.0.0     
+web.access-control-allow-origin: "*"   
+
+# Parallelism and slots
+taskmanager.numberOfTaskSlots: 50
+parallelism.default: 6
+classloader.check-leaked-classloader: false
+classloader.resolve-order: parent-first
+# classloader.resolve-order: child-first
+# env.java.opts.all: "-XX:+IgnoreUnrecognizedVMOptions --add-opens=java.base/java.nio=ALL-UNNAMED -Dlog4j2.formatMsgNoLookups=true -Dorg.apache.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED"
+
+# TaskManager memory configuration - Balanced for 20GB total
+taskmanager.memory.process.size: 20gb
+taskmanager.memory.jvm-overhead.min: 1gb
+taskmanager.memory.jvm-overhead.max: 4gb
+taskmanager.memory.framework.heap.size: 1gb
+taskmanager.memory.task.heap.size: 8gb
+taskmanager.memory.managed.size: 6gb
+taskmanager.memory.network.min: 1gb
+taskmanager.memory.network.max: 2gb
+
+# RocksDB State Backend
+state.backend: rocksdb
+state.backend.incremental: true
+state.backend.rocksdb.memory.managed: true
+state.backend.rocksdb.memory.fixed-per-slot: 512mb
+state.backend.rocksdb.block.cache-size: 256mb
+state.backend.rocksdb.writebuffer.size: 64mb
+state.backend.rocksdb.use-bloom-filter: true
+pekko.ask.timeout: 30s
+pekko.tcp.timeout: 60s
+heartbeat.timeout: 60000
+heartbeat.interval: 10000
+
+# Checkpointing 
+pipeline.classpaths: file:///opt/flink/lib
+state.checkpoints.dir: file:///opt/flink/flink-state/flink-checkpoints
+state.savepoints.dir: file:///opt/flink/flink-state/flink-savepoints
+# state.checkpoints.dir: hdfs://namenode:9000/warehouse/flink/flink-state/flink-checkpoints
+# state.savepoints.dir: hdfs://namenode:9000/warehouse/flink/flink-state/flink-savepoints
+execution.checkpointing.interval: 10
+execution.checkpointing.mode: EXACTLY_ONCE
+execution.checkpointing.min-pause: 5
+execution.checkpointing.max-concurrent-checkpoints: 1
+
+# Kafka-specific settings for SQL
+sql-client.execution.result-mode: table
+table.exec.source.idle-timeout: 10000
+table.exec.state.ttl: 3600000
+
+# Add these SQL-specific optimizations
+table.optimizer.join-reorder-enabled: true
+table.exec.spill-compression.enabled: true
+table.exec.resource.default-parallelism: 6
+execution.checkpointing.timeout: 900000
+
+# SQL Client specific configurations
+sql-gateway.enabled: true
+sql-gateway.endpoint.rest.address: 0.0.0.0      # External address (how external systems reach it)
+sql-gateway.endpoint.rest.port: 8082            # External port (from outside)
+sql-gateway.endpoint.rest.bind-address: 0.0.0.0 # Internal binding (listen on all interfaces)
+sql-gateway.endpoint.rest.bind-port: 8082       # Internal port (inside container)
+
+# Fault tolerance
+restart-strategy: fixed-delay
+restart-strategy.fixed-delay.attempts: 5
+restart-strategy.fixed-delay.delay: 15s
+
+# Metrics reporting configuration
+metrics.reporters: prometheus, jmx
+metrics.reporter.prometheus.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+metrics.reporter.jmx.factory.class: org.apache.flink.metrics.jmx.JMXReporterFactory
+metrics.reporter.prometheus.port: 9249
+metrics.reporter.prometheus.host: 0.0.0.0
+
+# Configure metric collection intervals
+metrics.jvm-cpu.load.enabled: true
+metrics.system-cpu.load.enabled: true
+metrics.system-resource-probing.enabled: true
+metrics.system-resource: true
+metrics.system-resource-probing.interval: 5000
+
+# Configure metric collection intervals
+metrics.latency.interval: 5000
+metrics.latency.history-size: 60
+
+# Metric scope formatting
+metrics.scope.delimiter: _
+metrics.scope.jm: jobmanager
+metrics.scope.jm.job: jobmanager.job
+metrics.reporter.prometheus.scope.variables: ["host", "tm_id", "job_id", "task_id"]
+
+# Include production-relevant metrics including Kafka
+#metrics.reporter.prometheus.filter.includes: "*.Status.JVM.CPU.*,*.Status.JVM.Memory.*,*.Status.JVM.GarbageCollector.*,*.Status.Network.*,*.job.*.numRecords*,*.job.*.numLateRecords*,*.job.*.numRestarts,*.job.*.fullRestarts,*.job.*.downtime,*.job.*.lastCheckpointSize,*.job.*.lastCheckpointDuration,*.job.*.numberOfCompletedCheckpoints,*.job.*.numberOfFailedCheckpoints,*.Shuffle.Netty.*,*.Status.Shuffle.*,*.job.*.operator.*Kafka*,*.job.*.operator.KafkaConsumer.*,*.job.*.operator.KafkaProducer.*"
+metrics.reporter.prometheus.filter.includes: "*"
+metrics.reporter.prometheus.filter.excludes: ""

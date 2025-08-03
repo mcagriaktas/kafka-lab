@@ -1,0 +1,109 @@
+services:
+  kafka1:
+    container_name: kafka1
+    hostname: kafka1
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+    volumes:
+      - ./configs/kafka/kafka1/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka1/data/:/opt/data/
+      - ./logs/kafka/kafka1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    hostname: kafka2
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+    volumes:
+      - ./configs/kafka/kafka2/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka2/data:/opt/data/
+      - ./logs/kafka/kafka2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka3:
+    container_name: kafka3
+    hostname: kafka3
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+    volumes:
+      - ./configs/kafka/kafka3/server.properties:/opt/kafka/config/server.properties   
+      - ./logs/kafka/kafka3/data:/opt/data/
+      - ./logs/kafka/kafka3/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  burrow:
+    container_name: burrow
+    build:
+      context: ./images/burrow/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/burrow/burrow.toml:/opt/burrow.toml
+      - ./logs/burrow/:/opt/logs/
+    ports:
+      - 8000:8000
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.17
+
+  prometheus:
+    container_name: prometheus
+    build:
+      context: ./images/prometheus/.
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./logs/prometheus/:/prometheus/data
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.25
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - burrow
+      
+  grafana:
+    container_name: grafana
+    build:
+      context: ./images/grafana
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./configs/grafana/grafana.ini:/opt/grafana/confs/grafana.ini
+      - ./configs/grafana/provisioning/datasources/:/opt/grafana/provisioning/datasources/
+      - ./configs/grafana/provisioning/dashboards/:/opt/grafana/provisioning/dashboards/
+      - ./logs/grafana/logs:/opt/grafana/logs
+      - ./logs/grafana/data:/opt/grafana/data
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.40
+    depends_on:
+      - prometheus
+
+
+networks:
+  dahbest:
+    external: true

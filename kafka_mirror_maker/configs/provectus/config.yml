@@ -1,0 +1,13 @@
+kafka:
+  clusters:
+    - name: cluster-a
+      bootstrapServers: kafka1-a:9092,kafka2-a:9092,kafka3-a:9092
+    - name: cluster-b
+      bootstrapServers: kafka1-b:9092,kafka2-b:9092,kafka3-b:9092
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO

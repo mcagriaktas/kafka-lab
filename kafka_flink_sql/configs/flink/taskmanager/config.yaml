@@ -1,0 +1,62 @@
+# TaskManager config.yaml
+
+# JobManager connection settings
+jobmanager.rpc.address: jobmanager        
+jobmanager.rpc.port: 6123
+jobmanager.memory.process.size: 4gb 
+taskmanager.bind-host: 0.0.0.0   
+
+# TaskManager memory configuration - Balanced for 20GB total
+taskmanager.memory.process.size: 20gb
+taskmanager.memory.jvm-overhead.min: 1gb
+taskmanager.memory.jvm-overhead.max: 4gb
+taskmanager.memory.framework.heap.size: 1gb
+taskmanager.memory.task.heap.size: 8gb
+taskmanager.memory.managed.size: 6gb
+taskmanager.memory.network.min: 1gb
+taskmanager.memory.network.max: 2gb
+
+# Parallelism and slots
+taskmanager.numberOfTaskSlots: 50
+parallelism.default: 6
+classloader.check-leaked-classloader: false
+classloader.resolve-order: parent-first
+# env.java.opts.all: "-XX:+IgnoreUnrecognizedVMOptions -XX:+UnlockDiagnosticVMOptions -XX:+DebugNonSafepoints --add-opens=java.base/java.nio=ALL-UNNAMED -Dlog4j2.formatMsgNoLookups=true -Dorg.apache.hadoop.fs.s3a.impl=org.apache.hadoop.fs.s3a.S3AFileSystem --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED"
+
+# Network configuration
+taskmanager.memory.network.fraction: 0.1
+
+# Fault tolerance
+restart-strategy: fixed-delay
+restart-strategy.fixed-delay.attempts: 3
+restart-strategy.fixed-delay.delay: 10s
+
+# Metrics reporting configuration
+metrics.reporters: prometheus, jmx
+metrics.reporter.prometheus.factory.class: org.apache.flink.metrics.prometheus.PrometheusReporterFactory
+metrics.reporter.jmx.factory.class: org.apache.flink.metrics.jmx.JMXReporterFactory
+metrics.reporter.prometheus.port: 9249
+metrics.reporter.prometheus.host: 0.0.0.0
+
+# Enable CPU metrics collection explicitly
+metrics.jvm-cpu.load.enabled: true
+metrics.system-cpu.load.enabled: true
+metrics.system-resource-probing.enabled: true
+metrics.system-resource: true
+metrics.system-resource-probing.interval: 5000
+
+# Configure metric collection intervals
+metrics.latency.interval: 5000
+metrics.latency.history-size: 60
+
+# Metric scope formatting
+metrics.scope.delimiter: _
+metrics.scope.tm: taskmanager
+metrics.scope.tm.job: taskmanager.job
+metrics.scope.task: taskmanager.task
+metrics.scope.operator: taskmanager.job.operator
+
+# Include production-relevant metrics including CPU and Kafka
+# metrics.reporter.prometheus.filter.includes: "*.Status.JVM.CPU.Load,*.Status.JVM.CPU.Time,*.CPU.*,*.Status.JVM.Memory.*,*.Status.JVM.GarbageCollector.*,*.Status.Network.*,*.job.*.numRecords*,*.job.*.numLateRecords*,*.job.*.numRestarts,*.job.*.fullRestarts,*.job.*.downtime,*.job.*.lastCheckpointSize,*.job.*.lastCheckpointDuration,*.job.*.numberOfCompletedCheckpoints,*.job.*.numberOfFailedCheckpoints,*.Shuffle.Netty.*,*.Status.Shuffle.*,*.job.*.operator.*Kafka*,*.job.*.operator.KafkaConsumer.*,*.job.*.operator.KafkaProducer.*"
+metrics.reporter.prometheus.filter.includes: "*"
+metrics.reporter.prometheus.filter.excludes: ""

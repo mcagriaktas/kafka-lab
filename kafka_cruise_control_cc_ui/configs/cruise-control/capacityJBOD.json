@@ -1,0 +1,34 @@
+{
+  "brokerCapacities":[
+    {
+      "brokerId": "1",
+      "capacity": {
+        "DISK": {"/opt/data/kafka-logs-1": "500000"},
+        "CPU": "100",
+        "NW_IN": "50000",
+        "NW_OUT": "50000"
+      },
+      "doc": "This overrides the capacity for broker 1. This broker is not a JBOD broker."
+    },
+    {
+      "brokerId": "2",
+      "capacity": {
+        "DISK": {"/opt/data/kafka-logs-2": "500000"},
+        "CPU": "100",
+        "NW_IN": "50000",
+        "NW_OUT": "50000"
+      },
+      "doc": "This overrides the capacity for broker 2. This broker is a JBOD broker."
+    },
+    {
+      "brokerId": "3",
+      "capacity": {
+        "DISK": {"/opt/data/kafka-logs-3": "500000"},
+        "CPU": "100",
+        "NW_IN": "50000",
+        "NW_OUT": "50000"
+      },
+      "doc": "This overrides the capacity for broker 3. This broker is a JBOD broker."
+    }
+  ]
+}

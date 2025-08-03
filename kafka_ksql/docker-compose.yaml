@@ -1,0 +1,90 @@
+services:
+  kafka1:
+    container_name: kafka1
+    hostname: kafka1
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '19092:19092'
+      - '9308:9308'
+    volumes:
+      - ./configs/kafka/kafka1/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka1/data/:/opt/data/
+      - ./logs/kafka/kafka1/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.11
+
+  kafka2:
+    container_name: kafka2
+    hostname: kafka2
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '29092:29092'
+    volumes:
+      - ./configs/kafka/kafka2/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka2/data:/opt/data/
+      - ./logs/kafka/kafka2/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+
+  kafka3:
+    container_name: kafka3
+    hostname: kafka3
+    build:
+      context: ./images/kafka/.
+      dockerfile: Dockerfile
+    ports:
+      - '39092:39092'
+    volumes:
+      - ./configs/kafka/kafka3/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka3/data:/opt/data/
+      - ./logs/kafka/kafka3/logs/:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+
+  kafka-ui:
+    container_name: kafka-ui
+    build:
+      context: ./images/provectus/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs/provectus/config.yml:/mnt/config.yml
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.14
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+  ksqldb:
+    container_name: ksqldb
+    build:
+      context: ./images/ksqldb/.
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./configs/ksqldb/ksqldb.properties:/opt/ksqldb/config/ksqldb.properties
+      - ./logs/ksql/logs:/opt/data/ksql/logs
+      - ./logs/ksql/data:/opt/data/ksql/data
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.18
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+
+
+networks:
+  dahbest:
+    external: true

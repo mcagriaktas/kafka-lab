@@ -1,51 +1,48 @@
 services:
   kafka1:
     container_name: kafka1
+    hostname: kafka1
     build:
       context: ./images/kafka/.
       dockerfile: Dockerfile
     ports:
       - '19092:19092'
-      - '7071:7071'
     volumes:
-      - ./config/kafka1/server.properties:/opt/kafka/config/server.properties
-      - ./config/kafka1/kafka-metrics.yml:/opt/jmx_exporter/kafka-metrics.yml
-      - ./logs/kafka_data/kafka1/:/opt/kafka/logs
-      - ./logs/kafka_data/kafka1/metadata/:/data/kafka
+      - ./configs/kafka/kafka1/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka1/data/:/opt/data/
+      - ./logs/kafka/kafka1/logs/:/opt/kafka/logs/
     networks:
       dahbest:
         ipv4_address: 172.80.0.11
 
   kafka2:
     container_name: kafka2
+    hostname: kafka2
     build:
       context: ./images/kafka/.
       dockerfile: Dockerfile
     ports:
       - '29092:29092'
-      - '7072:7071'
     volumes:
-      - ./config/kafka2/server.properties:/opt/kafka/config/server.properties
-      - ./config/kafka2/kafka-metrics.yml:/opt/jmx_exporter/kafka-metrics.yml
-      - ./logs/kafka_data/kafka2/:/opt/kafka/logs
-      - ./logs/kafka_data/kafka2/metadata/:/data/kafka
+      - ./configs/kafka/kafka2/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka2/data:/opt/data/
+      - ./logs/kafka/kafka2/logs/:/opt/kafka/logs/
     networks:
       dahbest:
         ipv4_address: 172.80.0.12
 
   kafka3:
     container_name: kafka3
+    hostname: kafka3
     build:
       context: ./images/kafka/.
       dockerfile: Dockerfile
     ports:
       - '39092:39092'
-      - '7073:7071'
     volumes:
-      - ./config/kafka3/server.properties:/opt/kafka/config/server.properties
-      - ./config/kafka3/kafka-metrics.yml:/opt/jmx_exporter/kafka-metrics.yml      
-      - ./logs/kafka_data/kafka3/:/opt/kafka/logs
-      - ./logs/kafka_data/kafka3/metadata/:/data/kafka
+      - ./configs/kafka/kafka3/server.properties:/opt/kafka/config/server.properties
+      - ./logs/kafka/kafka3/data:/opt/data/
+      - ./logs/kafka/kafka3/logs/:/opt/kafka/logs/
     networks:
       dahbest:
         ipv4_address: 172.80.0.13
@@ -58,11 +55,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8083:8083"
-      - "9090:8080"
+      - "8084:8080"
     volumes:
-      - ./config/debezium/connect-metrics.yml:/opt/jmx_exporter/connect-metrics.yml
-      - ./config/debezium/connect-distributed.properties:/opt/kafka/config/connect-distributed.properties
-      - ./logs/debezium_data:/data/kafka-connect
+      - ./configs/debezium/connect-distributed.properties:/opt/kafka/config/connect-distributed.properties
+      - ./configs/debezium/connect-metrics.yml:/opt/jmx_exporter/connect-metrics.yml
+      - ./logs/debezium:/data/kafka-connect
     depends_on:
       - kafka1
       - kafka2
@@ -80,7 +77,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./config/provectus/config.yml:/opt/kafka-ui/config.yml
+      - ./configs/provectus/config.yml:/opt/kafka-ui/config.yml
     networks:
       dahbest:
         ipv4_address: 172.80.0.16
@@ -88,7 +85,7 @@ services:
       - kafka1
       - kafka2
       - kafka3
-
+      
   postgres:
       image: postgres:16
       container_name: postgres
@@ -99,7 +96,7 @@ services:
       ports:
         - "5432:5432"
       volumes:
-        - ./logs/postgres-data:/var/lib/postgresql/data
+        - ./logs/postgres/:/var/lib/postgresql/data
       networks:
         dahbest:
           ipv4_address: 172.80.0.20
