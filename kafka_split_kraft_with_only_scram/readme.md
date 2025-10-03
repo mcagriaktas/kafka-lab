@@ -23,18 +23,6 @@ With all necessary configuration files and example settings included, this repos
 
 ---
 
-## Why No Controller Authentication?
-
-| Component      | SCRAM Support | Reason                                                                 |
-|----------------|---------------|------------------------------------------------------------------------|
-| **Brokers**    | ✅ Supported  | Client authentication (producers/consumers)                            |
-| **Controller** | ❌ Not Supported | Kafka 4.0.0 controller quorum **cannot use SCRAM** for metadata communication |
-| **Deployment** | Brokers ONLY  | Brokers are secured, controllers use default (no SCRAM)                |
-
-> This architecture secures the broker endpoints — the attack surface for clients — while acknowledging the controller limitation.
-
----
-
 ## Directory Structure
 
 ```bash
