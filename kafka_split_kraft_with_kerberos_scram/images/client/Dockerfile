@@ -30,9 +30,9 @@ COPY config/python_requirements.txt /mnt/python_requirements.txt
 RUN pip3 install --no-cache-dir -r /mnt/python_requirements.txt
 
 COPY config/krb5.conf /etc/krb5.conf
-COPY init-sh/starter-client.sh /mnt/starter-client.sh
-RUN chmod +x /mnt/starter-client.sh
+COPY init-sh/starter-client.sh /usr/bin/starter-client.sh
+RUN chmod +x /usr/bin/starter-client.sh
 
 RUN chmod 777 -R /mnt
 
-CMD [ "/mnt/starter-client.sh" ]
+CMD [ "starter-client.sh" ]

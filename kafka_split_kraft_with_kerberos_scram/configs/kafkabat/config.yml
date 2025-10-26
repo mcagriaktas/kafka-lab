@@ -1,0 +1,60 @@
+# ======================================================
+# Kafka Clusters Configuration
+# Define all Kafka cluster-specific settings and related integrations.
+# ======================================================
+kafka:
+  clusters:
+    - name: cagri_cluster
+      bootstrap-servers: broker1.dahbest.kfn:9092,broker2.dahbest.kfn:9092,broker3.dahbest.kfn:9092
+
+      ssl:
+        truststore-location: /opt/jks/kafka-ui.truststore.jks
+        truststore-password: cagri3541
+        verify-ssl: true
+
+      properties:
+        "security.protocol": SASL_SSL
+        "sasl.mechanism": SCRAM-SHA-256
+        "sasl.jaas.config": org.apache.kafka.common.security.scram.ScramLoginModule required username="kafkaui" password="cagri3541";
+
+# ======================================================
+# Server Configuration
+# Expose the application on port xxxx.
+# ======================================================
+server:
+  port: 8080
+
+# ======================================================
+# WebClient Settings
+# Configuration for HTTP clients used by the app.
+# ======================================================
+webclient:
+  response-timeout-ms: 20000        # Timeout for all outgoing HTTP requests
+  max-in-memory-buffer-size: 20MB   # Maximum buffer size for handling responses
+
+# ======================================================
+# Spring Boot Actuator
+# Enables health, info, and Prometheus endpoints for monitoring.
+# ======================================================
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "info,health"
+
+# ======================================================
+# Application Logging Configuration
+# Configure logging levels for specific packages.
+# ======================================================
+logging:
+  level:
+    root: INFO
+    io.kafbat.ui: DEBUG
+    reactor.netty.http.server.AccessLog: INFO
+    org.hibernate.validator: WARN
+    org.springframework.security.ldap: DEBUG

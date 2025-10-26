@@ -1,5 +1,37 @@
 # Securing a Split KRaft Kafka Architecture: Setting Up Kerberos and SCRAM Authentication
 
+--- 
+
+## UPDATED THE DEPLOYMENT!
+I’ve fully updated the deployment to Kafka KRaft cluster setup.
+For this reason, the current README.md and Medium article may be slightly outdated and might miss a few configuration details or logic changes.
+This doesn’t cause any issues — just make sure to read the README and Medium article first, and then follow the new deployment steps. The deployment now includes 3 Broker nodes and 3 Controller nodes, each with clean and simplified property files.
+P.S.: I’ll update the Medium article and README file as soon as possible... 🙂
+---
+
+New Features:
+1. Added `2 new Brokers` and `2 new Controllers`
+2. Integrated CoreDNS and assigned new IPs:
+      1. `broker1.dahbest.kfn:9092`
+      2. `broker2.dahbest.kfn:9092`
+      3. `broker3.dahbest.kfn:9092`
+      4. `controller1.dahbest.kfn:9092`
+      5. `controller2.dahbest.kfn:9092`
+      6. `controller3.dahbest.kfn:9092`
+3. Fixed and cleaned up the configuration files:
+      1. `broker.properties`
+      2. `controller.properties`
+4. Fixed and cleaned up the JAAS configuration files:
+      1. `broker_server_jaas.conf`
+      2. `controller_server_jaas.conf`
+5. Added a new `scram-admin-client.properties` file for SCRAM authentication with the Cluster API
+6. Fixed and cleaned up the python script files:
+      1. `prodecer.py`
+      2. `consumer.py`
+
+---
+
+### OLD VERSION:
 In this demo, the main aim is to implement a split KRaft Kafka Cluster with separate controller and broker components. When authentication is added to the `*.properties` files, the split architecture can cause confusion, which is why I've set up `GSSAPI authentication` between the controller and broker. Additionally, a client container is included that uses both `Kerberos and SCRAM authentication` with the broker. For a deeper understanding of configuration, properties files, and `Kerberos/SCRAM authentication`, please refer to the accompanying `medium article`.
 
 Medium Article: https://medium.com/@mucagriaktas/securing-a-split-kraft-kafka-architecture-setting-up-kerberos-and-scram-authentication-665f310ec306

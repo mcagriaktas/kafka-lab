@@ -1,18 +1,5 @@
 #!/bin/bash
 
-check_broker() {
-    if ! docker ps | grep -q "broker"; then
-        echo "❌ Broker container is not running..."
-        echo "Use 'docker-compose up -d --build or use ./init-docker-compose.sh' to start the containers"
-        exit 1
-    fi
-    echo "Broker container found"
-    return 0
-}
-
-# Explicitly call the function
-check_broker
-
 show_progress() {
     local width=20
     local i=0
@@ -45,14 +32,16 @@ stop_progress() {
     printf "] [✅]\n"
 }
 
+bootstrap_server=broker1.dahbest.kfn:9092,broker2.dahbest.kfn:9092,broker3.dahbest.kfn:9092
+
 list_topics() {
     echo "⚠️ Listing Kafka Topics"
     show_progress &
     PROGRESS_PID=$!
 
     echo "Current topics:"
-    if topics=$(docker exec broker /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    if topics=$(docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --list 2>&1); then
         echo "$topics"
         stop_progress $PROGRESS_PID
@@ -70,8 +59,8 @@ create_topic() {
     read -p "Please enter replication factor [1]: " replication_factor
     
     # Set defaults if empty
-    partitions=${partitions:-1}
-    replication_factor=${replication_factor:-1}
+    partitions=${partitions:-3}
+    replication_factor=${replication_factor:-2}
     
     if [ -z "$topic_name" ]; then
         echo "❌ Topic name cannot be empty"
@@ -82,8 +71,8 @@ create_topic() {
     show_progress &
     PROGRESS_PID=$!
 
-    if output=$(docker exec broker /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    if output=$(docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --create \
         --topic "$topic_name" \
         --partitions "$partitions" \
@@ -110,8 +99,8 @@ create_keytab() {
     show_progress &
     PROGRESS_PID=$!
 
-    if output=$(docker exec kerberos kadmin.local -q "addprinc -randkey $principle/$hostname@EXAMPLE.COM" 2>&1) && \
-       output2=$(docker exec kerberos kadmin.local -q "ktadd -k /keytabs/client-keytabs/$principle-$hostname.keytab $principle/$hostname@EXAMPLE.COM" 2>&1); then
+    if output=$(docker exec kerberos kadmin.local -q "addprinc -randkey $principle/$hostname@DAHBEST.KFN" 2>&1) && \
+       output2=$(docker exec kerberos kadmin.local -q "ktadd -k /keytabs/client-keytabs/$principle-$hostname.keytab $principle/$hostname@DAHBEST.KFN" 2>&1); then
         stop_progress $PROGRESS_PID
         echo "✅ Keytab created successfully"
     else
@@ -136,9 +125,9 @@ create_scram_user() {
     PROGRESS_PID=$!
 
     # Capture the output but don't display it yet
-    output=$(docker exec broker /opt/kafka/bin/kafka-configs.sh \
-        --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    output=$(docker exec broker1 /opt/kafka/bin/kafka-configs.sh \
+        --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --alter \
         --add-config "SCRAM-SHA-256=[password=$scram_password]" \
         --entity-type users \
@@ -164,9 +153,9 @@ list_scram_users() {
     PROGRESS_PID=$!
 
     # Capture the output but don't display it yet
-    output=$(docker exec broker /opt/kafka/bin/kafka-configs.sh \
-        --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    output=$(docker exec broker1 /opt/kafka/bin/kafka-configs.sh \
+        --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --describe \
         --entity-type users 2>&1)
     docker_exit_code=$?
@@ -198,8 +187,8 @@ add_consumer_group_acls() {
     show_progress &
     PROGRESS_PID=$!
 
-    if output=$(docker exec broker /opt/kafka/bin/kafka-acls.sh --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    if output=$(docker exec broker1 /opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --add \
         --allow-principal "User:$principal" \
         --operation READ \
@@ -225,8 +214,8 @@ describe_topic() {
     show_progress &
     PROGRESS_PID=$!
 
-    if output=$(docker exec broker /opt/kafka/bin/kafka-topics.sh --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    if output=$(docker exec broker1 /opt/kafka/bin/kafka-topics.sh --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --describe \
         --topic "$topic_name" 2>&1); then
         echo "$output"
@@ -253,8 +242,8 @@ add_acls() {
     show_progress &
     PROGRESS_PID=$!
 
-    if output=$(docker exec broker /opt/kafka/bin/kafka-acls.sh --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    if output=$(docker exec broker1 /opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --add \
         --allow-principal "User:$principal" \
         --operation "$operation" \
@@ -275,8 +264,8 @@ list_acls() {
     PROGRESS_PID=$!
 
     # Execute the command to list all ACLs
-    if output=$(docker exec broker /opt/kafka/bin/kafka-acls.sh --bootstrap-server broker:9092 \
-        --command-config /opt/kafka/config/kraft/admin-client.properties \
+    if output=$(docker exec broker1 /opt/kafka/bin/kafka-acls.sh --bootstrap-server $bootstrap_server \
+        --command-config /opt/kafka/config/gssapi-admin-client.properties \
         --list 2>&1); then
         stop_progress $PROGRESS_PID
         if [ -z "$output" ]; then

@@ -1,0 +1,242 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+startDelaySeconds: 15
+scrapeTimeout: 20s
+cacheDuration: 60
+
+rules:
+  # 1. Active Controller
+  - pattern: kafka.controller<type=KafkaController, name=ActiveControllerCount><>Value
+    name: kafka_controller_active_controller_count
+    type: GAUGE
+    labels:
+      cluster: "dev" 
+      environment: "company" 
+    
+  # 2 & 3 & 4 & 5. Broker, Topic, Partition, and Replica counts
+  - pattern: kafka.server<type=ReplicaManager, name=PartitionCount><>Value
+    name: kafka_server_replica_manager_partition_count
+    type: GAUGE
+    
+  - pattern: kafka.server<type=ReplicaManager, name=LeaderCount><>Value
+    name: kafka_server_replica_manager_leader_count
+    type: GAUGE
+    
+  - pattern: kafka.controller<type=KafkaController, name=GlobalPartitionCount><>Value
+    name: kafka_controller_global_partition_count
+    type: GAUGE
+    
+  - pattern: kafka.controller<type=KafkaController, name=GlobalTopicCount><>Value
+    name: kafka_controller_global_topic_count
+    type: GAUGE
+    
+  - pattern: kafka.controller<type=KafkaController, name=OfflinePartitionsCount><>Value
+    name: kafka_controller_offline_partitions_count
+    type: GAUGE
+    
+  - pattern: kafka.controller<type=KafkaController, name=ControllerStats, name=LeaderElectionRateAndTimeMs><>Count
+    name: kafka_controller_leader_election_rate_and_time_ms_count
+    type: GAUGE
+    
+  # 6. Uptime
+  - pattern: java.lang<type=Runtime><>Uptime
+    name: kafka_java_runtime_uptime_milliseconds
+    type: GAUGE
+    
+  # 7 & 8. Network In/Out (Note: These are OS metrics, normally from Node Exporter)
+  # For JVM network metrics (if available)
+  - pattern: java.lang<type=OperatingSystem><>OpenFileDescriptorCount
+    name: kafka_java_os_open_file_descriptor_count
+    type: GAUGE
+    
+  - pattern: java.lang<type=OperatingSystem><>MaxFileDescriptorCount
+    name: kafka_java_os_max_file_descriptor_count
+    type: GAUGE
+    
+  # 9. Connection Count
+  - pattern: kafka.server<type=socket-server-metrics, name=connection-count><>Value
+    name: kafka_server_socket_server_connection_count
+    type: GAUGE
+    
+  - pattern: kafka.server:type=socket-server-metrics,name=connection-count
+    name: kafka_server_socket_connection_count
+    type: GAUGE
+    
+  - pattern: kafka.server:type=socket-server-metrics,listener=(.+),networkProcessor=(.+),name=connection-count
+    name: kafka_server_socket_connection_count_by_listener
+    type: GAUGE
+    labels:
+      listener: "$1"
+      processor: "$2"
+    
+  # 10. IP Based Connections (requires custom metrics)
+  
+  # 11. GC Metrics
+  - pattern: java.lang<type=GarbageCollector, name=(.+)><>CollectionCount
+    name: kafka_java_gc_collection_count
+    type: COUNTER
+    labels:
+      gc: "$1"
+    
+  - pattern: java.lang<type=GarbageCollector, name=(.+)><>CollectionTime
+    name: kafka_java_gc_collection_time_milliseconds
+    type: COUNTER
+    labels:
+      gc: "$1"
+    
+  # 12. Heap Usage
+  - pattern: java.lang<type=Memory><HeapMemoryUsage>used
+    name: kafka_java_heap_memory_usage_bytes
+    type: GAUGE
+    
+  - pattern: java.lang<type=Memory><HeapMemoryUsage>committed
+    name: kafka_java_heap_memory_committed_bytes
+    type: GAUGE
+    
+  - pattern: java.lang<type=Memory><HeapMemoryUsage>max
+    name: kafka_java_heap_memory_max_bytes
+    type: GAUGE
+    
+  # 13. Messages In Per Sec (all broker topics)
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=MessagesInPerSec><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_messages_in_per_sec
+    type: GAUGE
+    
+  # Per-topic messages in
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=MessagesInPerSec, topic=(.+)><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_messages_in_per_sec_by_topic
+    type: GAUGE
+    labels:
+      topic: "$1"
+    
+  # 14. Bytes Rejected Per Sec
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesRejectedPerSec><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_bytes_rejected_per_sec
+    type: GAUGE
+    
+  # 15. Bytes In Per Sec
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesInPerSec><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_bytes_in_per_sec
+    type: GAUGE
+    
+  # Per-topic bytes in
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesInPerSec, topic=(.+)><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_bytes_in_per_sec_by_topic
+    type: GAUGE
+    labels:
+      topic: "$1"
+    
+  # 16. Bytes Out Per Sec
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesOutPerSec><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_bytes_out_per_sec
+    type: GAUGE
+    
+  # Per-topic bytes out
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=BytesOutPerSec, topic=(.+)><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_bytes_out_per_sec_by_topic
+    type: GAUGE
+    labels:
+      topic: "$1"
+    
+  # 17. ISR Shrink Per Sec
+  - pattern: kafka.server<type=ReplicaManager, name=IsrShrinksPerSec><>OneMinuteRate
+    name: kafka_server_replica_manager_isr_shrinks_per_sec
+    type: GAUGE
+    
+  # 18. ISR Expand Per Sec
+  - pattern: kafka.server<type=ReplicaManager, name=IsrExpandsPerSec><>OneMinuteRate
+    name: kafka_server_replica_manager_isr_expands_per_sec
+    type: GAUGE
+    
+  # 19. Under Replicated Partition
+  - pattern: kafka.server<type=ReplicaManager, name=UnderReplicatedPartitions><>Value
+    name: kafka_server_replica_manager_under_replicated_partitions
+    type: GAUGE
+    
+  # 20. Leader Election Rate
+  - pattern: kafka.controller<type=ControllerStats, name=LeaderElectionRateAndTimeMs><>OneMinuteRate
+    name: kafka_controller_stats_leader_election_rate_per_sec
+    type: GAUGE
+    
+  # 21. Failed Produce Request Per Sec
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=FailedProduceRequestsPerSec><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_failed_produce_requests_per_sec
+    type: GAUGE
+    
+  # 22. Failed Fetch Request Per Sec
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=FailedFetchRequestsPerSec><>OneMinuteRate
+    name: kafka_server_brokertopicmetrics_failed_fetch_requests_per_sec
+    type: GAUGE
+    
+  # 23. Thread Count
+  - pattern: java.lang<type=Threading><>ThreadCount
+    name: kafka_java_thread_count
+    type: GAUGE
+    
+  # 24. Offline Partition Count
+  - pattern: kafka.controller<type=KafkaController, name=OfflinePartitionsCount><>Value
+    name: kafka_controller_offline_partitions_count
+    type: GAUGE
+    
+  # 25. File Descriptor Usage Percentage
+  - pattern: java.lang<type=OperatingSystem><>OpenFileDescriptorCount
+    name: kafka_java_os_open_file_descriptor_count
+    type: GAUGE
+    
+  - pattern: java.lang<type=OperatingSystem><>MaxFileDescriptorCount
+    name: kafka_java_os_max_file_descriptor_count
+    type: GAUGE
+    
+  # 26-32. Additional metrics for topic details, consumer groups, etc.
+  # Consumer group metrics
+  - pattern: kafka.coordinator.group<type=GroupMetadataManager, name=NumGroups><>Value
+    name: kafka_coordinator_group_metadata_manager_num_groups
+    type: GAUGE
+    
+  - pattern: kafka.coordinator.group<type=GroupMetadataManager, name=NumGroupsCompletingRebalance><>Value
+    name: kafka_coordinator_group_metadata_manager_groups_completing_rebalance
+    type: GAUGE
+
+  # Request metrics by type (can help with IP-based connections)
+  - pattern: kafka.network<type=RequestMetrics, name=RequestsPerSec, request=(.+)><>OneMinuteRate
+    name: kafka_network_request_metrics_requests_per_sec
+    type: GAUGE
+    labels:
+      request: "$1"
+      
+  # Catch other topic-related metrics
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+), topic=(.+)><>(.+)
+    name: kafka_server_brokertopicmetrics_$1_$3
+    type: GAUGE
+    labels:
+      topic: "$2"
+      
+  # Catch other broker-wide metrics
+  - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+)><>(.+)
+    name: kafka_server_brokertopicmetrics_$1_$2
+    type: GAUGE
+    
+  # Topic-partition metrics
+  - pattern: kafka.log<type=Log, name=(.+), topic=(.+), partition=(.+)><>(.+)
+    name: kafka_log_$1_$4
+    type: GAUGE
+    labels:
+      topic: "$2"
+      partition: "$3"
+
+  - pattern: kafka.log<type=Log, name=LogStartOffset, topic=(.+), partition=(.+)><>Value
+    name: kafka_log_start_offset
+    type: GAUGE
+    labels:
+      topic: "$1"
+      partition: "$2"
+
+  - pattern: kafka.log<type=Log, name=LogEndOffset, topic=(.+), partition=(.+)><>Value
+    name: kafka_log_end_offset
+    type: GAUGE
+    labels:
+      topic: "$1"
+      partition: "$2"
+      
+  # Fallback pattern to catch any missed metrics
+  - pattern: ".*"

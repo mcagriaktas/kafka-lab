@@ -1,52 +1,199 @@
 services:
-  broker:
-    container_name: broker
-    hostname: broker
-    user: kafka
+  broker1:
+    container_name: broker1
+    hostname: broker1
     build:
       context: ./images/kafka/broker/.
       dockerfile: Dockerfile
     ports:
-      - "9092:9092"
       - "19092:19092"
+      - "7071:7071"
     volumes:
-      - ./configs/kafka/broker/broker.properties:/opt/kafka/config/kraft/broker.properties:ro
-      - ./configs/kafka/kafka-keys:/opt/kafka/config/kraft/keys
-      - ./configs/keytabs/kafka-keytabs:/opt/kafka/config/kraft/keytabs
-      - ./logs/broker/logs:/opt/kafka/logs
-      - ./logs/broker/metadata:/kafka/kraft-broker-logs
+      - ./configs/kafka/broker1/broker.properties:/opt/kafka/config/broker.properties
+      - ./configs/kafka/broker1/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
+      - ./configs/kafka/broker1/gssapi-admin-client.properties:/opt/kafka/config/gssapi-admin-client.properties
+      - ./configs/kafka/broker1/scram-admin-client.properties:/opt/kafka/config/scram-admin-client.properties
+      - ./configs/prometheus/broker-metrics.yml:/opt/jmx_exporter/broker-metrics.yml
+      - ./configs/kafka/broker1/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/broker1/keytabs/:/opt/kafka/config/keytabs/
+      # - ./logs/kafka/broker1/data:/opt/data/
+      # - ./logs/kafka/broker1/logs:/opt/kafka/logs/
     networks:
       dahbest:
-        ipv4_address: 172.80.0.10
-    extra_hosts:
-      - "controller:172.80.0.11"
-      - "kerberos:172.80.0.12"
+        ipv4_address: 172.80.0.11
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
     depends_on:
       - kerberos
+      - coredns
 
-  controller:
-    container_name: controller
-    hostname: controller
-    user: kafka
+  broker2:
+    container_name: broker2
+    hostname: broker2
+    build:
+      context: ./images/kafka/broker/.
+      dockerfile: Dockerfile
+    ports:
+      - "29092:19092"
+      - "7072:7071"
+    volumes:
+      - ./configs/kafka/broker2/broker.properties:/opt/kafka/config/broker.properties
+      - ./configs/kafka/broker2/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
+      - ./configs/prometheus/broker-metrics.yml:/opt/jmx_exporter/broker-metrics.yml
+      - ./configs/kafka/broker2/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/broker2/keytabs/:/opt/kafka/config/keytabs/
+      # - ./logs/kafka/broker2/data:/opt/data/
+      # - ./logs/kafka/broker2/logs:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.12
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
+    depends_on:
+      - kerberos
+      - coredns
+
+  broker3:
+    container_name: broker3
+    hostname: broker3
+    build:
+      context: ./images/kafka/broker/.
+      dockerfile: Dockerfile
+    ports:
+      - "39092:19092"
+      - "7073:7071"
+    volumes:
+      - ./configs/kafka/broker3/broker.properties:/opt/kafka/config/broker.properties
+      - ./configs/kafka/broker3/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
+      - ./configs/prometheus/broker-metrics.yml:/opt/jmx_exporter/broker-metrics.yml
+      - ./configs/kafka/broker3/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/broker3/keytabs/:/opt/kafka/config/keytabs/
+      # - ./logs/kafka/broker3/data:/opt/data/
+      # - ./logs/kafka/broker3/logs:/opt/kafka/logs/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.13
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
+    depends_on:
+      - kerberos
+      - coredns
+
+  controller1:
+    container_name: controller1
+    hostname: controller1
+    build:
+      context: ./images/kafka/controller/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/kafka/controller1/controller.properties:/opt/kafka/config/controller.properties
+      - ./configs/kafka/controller1/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
+      - ./configs/kafka/broker1/gssapi-admin-client.properties:/opt/kafka/config/gssapi-admin-client.properties
+      - ./configs/kafka/broker1/scram-admin-client.properties:/opt/kafka/config/scram-admin-client.properties
+      - ./configs/prometheus/controller-metrics.yml:/opt/jmx_exporter/controller-metrics.yml
+      - ./configs/kafka/controller1/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/controller1/keytabs/:/opt/kafka/config/keytabs/
+      # - ./logs/kafka/controller1/data:/opt/data/metadata/
+      # - ./logs/kafka/controller1/data:/opt/kafka/logs/
+    ports:
+      - "7081:7071"
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.21
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
+    depends_on:
+      - kerberos
+      - coredns
+
+  controller2:
+    container_name: controller2
+    hostname: controller2
+    build:
+      context: ./images/kafka/controller/.
+      dockerfile: Dockerfile
+    volumes:
+      - ./configs/kafka/controller2/controller.properties:/opt/kafka/config/controller.properties
+      - ./configs/kafka/controller2/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
+      - ./configs/prometheus/controller-metrics.yml:/opt/jmx_exporter/controller-metrics.yml
+      - ./configs/kafka/controller2/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/controller2/keytabs/:/opt/kafka/config/keytabs/
+      # - ./logs/kafka/controller2/data:/opt/data/metadata
+      # - ./logs/kafka/controller2/data:/opt/kafka/logs/
+    ports:
+      - "7082:7071"
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.22
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
+    depends_on:
+      - kerberos
+      - coredns
+
+  controller3:
+    container_name: controller3
+    hostname: controller3
     build:
       context: ./images/kafka/controller/.
       dockerfile: Dockerfile
     ports:
-      - "9093:9093"
+      - "7083:7071"
     volumes:
-      - ./configs/kafka/controller/controller.properties:/opt/kafka/config/kraft/controller.properties:ro
-      - ./configs/kafka/kafka-keys:/opt/kafka/config/kraft/keys
-      - ./configs/keytabs/kafka-keytabs:/opt/kafka/config/kraft/keytabs
-      - ./logs/controller/logs:/opt/kafka/logs
-      - ./logs/controller/metadata:/kafka/kraft-controller-logs
+      - ./configs/kafka/controller3/controller.properties:/opt/kafka/config/controller.properties
+      - ./configs/kafka/controller3/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
+      - ./configs/prometheus/controller-metrics.yml:/opt/jmx_exporter/controller-metrics.yml
+      - ./configs/kafka/controller3/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/controller3/keytabs/:/opt/kafka/config/keytabs/
+      # - ./logs/kafka/controller3/data:/opt/data/metadata
+      # - ./logs/kafka/controller3/data:/opt/kafka/logs/
     networks:
       dahbest:
-        ipv4_address: 172.80.0.11
-    extra_hosts:
-      - "broker:172.80.0.10"
-      - "kerberos:172.80.0.12"
+        ipv4_address: 172.80.0.23
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
     depends_on:
       - kerberos
+      - coredns
+
+  kafka-ui:
+    container_name: kafka-ui
+    hostname: kafka-ui
+    build:
+      context: ./images/kafkabat/.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./configs/kafkabat/config.yml:/opt/config.yml
+      - ./configs/kafkabat/jks/:/opt/jks/
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.17
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
+    depends_on:
+      - broker1
+      - broker2
+      - broker3
+      - controller1
+      - controller2
+      - controller3
+      - coredns
 
   kerberos:
     container_name: kerberos
@@ -58,15 +205,42 @@ services:
       - "88:88/udp"
       - "749:749/tcp"
     volumes:
-      - ./logs/kerberos:/var/lib/krb5kdc
-      - ./configs/keytabs/kafka-keytabs:/keytabs/kafka-keytabs
-      - ./configs/keytabs/client-keytabs:/keytabs/client-keytabs
+      - ./configs/kafka/broker1/keytabs/:/mnt/keytabs/kafka-keytabs/broker1/
+      - ./configs/kafka/broker2/keytabs/:/mnt/keytabs/kafka-keytabs/broker2/
+      - ./configs/kafka/broker3/keytabs/:/mnt/keytabs/kafka-keytabs/broker3/
+      - ./configs/kafka/controller1/keytabs/:/mnt/keytabs/kafka-keytabs/controller1/
+      - ./configs/kafka/controller2/keytabs/:/mnt/keytabs/kafka-keytabs/controller2/
+      - ./configs/kafka/controller3/keytabs/:/mnt/keytabs/kafka-keytabs/controller3/
+      - ./client/keytabs/:/mnt/keytabs/kafka-keytabs/client/
     networks:
       dahbest:
-        ipv4_address: 172.80.0.12
-    extra_hosts:
-      - "broker:172.80.0.10"
-      - "controller:172.80.0.11"
+        ipv4_address: 172.80.0.30
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
+    depends_on:
+      - coredns
+      
+  coredns:
+    container_name: coredns
+    hostname: coredns
+    build:
+      context: ./images/coredns/.
+      dockerfile: Dockerfile
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    volumes:
+      - ./configs/coredns/Corefile:/etc/coredns/Corefile
+      - ./configs/coredns/dahbest.kfn.db:/etc/coredns/dahbest.kfn.db
+    networks:
+      dahbest:
+        ipv4_address: 172.80.0.40
+    dns:
+      - 172.80.0.40
+    dns_search:
+      - dahbest.kfn
 
   client:
     container_name: client
@@ -75,17 +249,19 @@ services:
       context: ./images/client/.
       dockerfile: Dockerfile
     volumes:
-      - ./configs/client:/mnt/home
-      - ./configs/keytabs/client-keytabs:/mnt/keytabs
+      - ./client/:/mnt
     networks:
       dahbest:
-        ipv4_address: 172.80.0.13
-    extra_hosts:
-      - "broker:172.80.0.10"
-      - "controller:172.80.0.11"
-      - "kerberos:172.80.0.12"
+        ipv4_address: 172.80.0.31
+    dns:
+      - 172.80.0.40
+      - 8.8.8.8
+      - 8.8.4.4
+    dns_search:
+      - dahbest.kfn
     depends_on:
       - kerberos
+      - coredns
 
 networks:
   dahbest:

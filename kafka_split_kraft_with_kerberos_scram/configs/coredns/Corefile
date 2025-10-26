@@ -1,0 +1,16 @@
+dahbest.kfn:53 {
+    file /etc/coredns/dahbest.kfn.db
+    log
+    errors
+    debug
+}
+
+.:53 {
+    forward . 172.80.0.11 {
+        max_concurrent 1000
+        policy sequential
+    }
+    log
+    errors
+    debug
+}

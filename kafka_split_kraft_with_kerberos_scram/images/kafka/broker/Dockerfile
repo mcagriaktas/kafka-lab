@@ -1,9 +1,11 @@
 FROM openjdk:17.0.1-jdk-slim
 
-RUN groupadd -r kafka && useradd -r -g kafka kafka
+ENV JMX_EXPORTER_HOME=/opt/jmx_exporter
+ENV JMX_EXPORTER_VERSION=1.0.1
 
-ENV KAFKA_OPTS="--enable-native-access=ALL-UNNAMED -Djava.security.auth.login.config=/opt/kafka/config/kraft/broker_server_jaas.conf -Djava.security.krb5.conf=/etc/krb5.conf"
-ENV KAFKA_HEAP_OPTS="-Xms10G -Xmx10G"
+ENV KAFKA_OPTS="-Djava.security.auth.login.config=/opt/kafka/config/broker_server_jaas.conf -Djava.security.krb5.conf=/etc/krb5.conf"
+ENV KAFKA_HEAP_OPTS="-Xms2G -Xmx6G"
+ENV EXTRA_ARGS="-javaagent:${JMX_EXPORTER_HOME}/jmx_prometheus_javaagent.jar=7071:${JMX_EXPORTER_HOME}/broker-metrics.yml"
 
 RUN apt-get update && \
     apt-get install -y \
@@ -16,25 +18,25 @@ RUN apt-get update && \
     mkdir /var/run/sshd
 
 WORKDIR /opt
+RUN mkdir -p ${JMX_EXPORTER_HOME}
 
-RUN wget https://downloads.apache.org/kafka/3.8.0/kafka_2.13-3.8.0.tgz && \
-    tar -xzf kafka_2.13-3.8.0.tgz && \
-    mv kafka_2.13-3.8.0 kafka && \
-    rm kafka_2.13-3.8.0.tgz
+RUN wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz && \
+    tar -xzf kafka_2.13-4.0.0.tgz && \
+    mv kafka_2.13-4.0.0 kafka && \
+    rm kafka_2.13-4.0.0.tgz
 
-COPY init-sh/starter-broker.sh /opt/kafka/bin/starter-broker.sh
-COPY config/broker_server_jaas.conf /opt/kafka/config/kraft/broker_server_jaas.conf
-COPY config/admin-client.properties /opt/kafka/config/kraft/admin-client.properties
+RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
+    -O ${JMX_EXPORTER_HOME}/jmx_prometheus_javaagent.jar
+    
+COPY init-sh/broker-starter.sh /usr/bin/broker-starter.sh
+COPY init-sh/kafka-starter-user-creator.sh /usr/bin/kafka-starter-user-creator.sh
 COPY config/krb5.conf /etc/krb5.conf
 
-RUN mkdir -p /opt/kafka/config/kraft/keys && \
-    mkdir -p /opt/kafka/config/kraft/keytabs && \
+RUN mkdir -p /opt/kafka/config/jks && \
+    mkdir -p /opt/kafka/config/keytabs && \
     mkdir /kafka && \
-    chmod +x /opt/kafka/bin/starter-broker.sh && \
-    chown -R kafka:kafka /opt/kafka && \
-    chown -R kafka:kafka /kafka && \
-    chmod 777 -R /opt/kafka/config/kraft
-    
-USER kafka
+    chmod +x /usr/bin/broker-starter.sh && \
+    chmod +x /usr/bin/kafka-starter-user-creator.sh && \
+    chmod 777 -R /opt/kafka/config
 
-CMD ["/opt/kafka/bin/starter-broker.sh"]
+CMD [ "broker-starter.sh" ]

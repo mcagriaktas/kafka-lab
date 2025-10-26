@@ -1,12 +1,25 @@
 #!/bin/bash
 
-# Create necessary directories
+sleep 5
+
+set -euo pipefail
+
+: "${KRB5_REALM:=DAHBEST.KFN}"
+: "${KRB5_ADMIN_PASSWORD:=cagri3541}"
+: "${DNS_DOMAIN:=dahbest.kfn}"
+
 mkdir -p /var/lib/krb5kdc
 mkdir -p /etc/krb5kdc
-mkdir -p /keytabs
-mkdir -p /client-keytabs
+mkdir -p /mnt/keytabs
 
-# Function to check if KDC is running
+mkdir -p /mnt/keytabs/kafka-keytabs/broker1
+mkdir -p /mnt/keytabs/kafka-keytabs/broker2
+mkdir -p /mnt/keytabs/kafka-keytabs/broker3
+mkdir -p /mnt/keytabs/kafka-keytabs/controller1
+mkdir -p /mnt/keytabs/kafka-keytabs/controller2
+mkdir -p /mnt/keytabs/kafka-keytabs/controller3
+mkdir -p /mnt/keytabs/kafka-keytabs/client
+
 check_kdc_running() {
     if pidof krb5kdc > /dev/null; then
         return 0
@@ -15,49 +28,47 @@ check_kdc_running() {
     fi
 }
 
-# Function to initialize KDC
 initialize_kdc() {
-    echo "Creating KDC database..."
+    echo "Creating KDC database for realm: ${KRB5_REALM}..."
     
-    # Stop KDC services if they're running
-    service krb5-kdc stop
-    service krb5-admin-server stop
+    service krb5-kdc stop || true
+    service krb5-admin-server stop || true
     
-    # Remove old database files if they exist
     rm -rf /var/lib/krb5kdc/*
     
-    # Create new KDC database
-    kdb5_util create -s -r EXAMPLE.COM -P cagri3541
+    kdb5_util create -s -r "${KRB5_REALM}" -P "${KRB5_ADMIN_PASSWORD}"
     
     if [ $? -ne 0 ]; then
         echo "Failed to create KDC database"
         exit 1
     fi
-    
-    # Create admin principal
+
     echo "Creating admin principal..."
-    kadmin.local -q "addprinc -pw cagri3541 admin/admin@EXAMPLE.COM"
+    kadmin.local -q "addprinc -pw ${KRB5_ADMIN_PASSWORD} admin/admin@${KRB5_REALM}"
 
-    # Producer Container's User
-    echo "Creating broker principal and keytab..."
-    kadmin.local -q "addprinc -randkey client/client@EXAMPLE.COM"
-    kadmin.local -q "ktadd -k /keytabs/client-keytabs/client-client.keytab client/client@EXAMPLE.COM"
+    echo "Creating client principal and keytab..."
+    CLIENT_FQDN="client.${DNS_DOMAIN}"
+    kadmin.local -q "addprinc -randkey client/${CLIENT_FQDN}@${KRB5_REALM}"
+    kadmin.local -q "ktadd -k /mnt/keytabs/kafka-keytabs/client/client.keytab client/${CLIENT_FQDN}@${KRB5_REALM}"
 
-    # Create broker principal and keytab
-    echo "Creating broker principal and keytab..."
-    kadmin.local -q "addprinc -randkey kafka/broker@EXAMPLE.COM"
-    kadmin.local -q "ktadd -k /keytabs/kafka-keytabs/kafka-broker.keytab kafka/broker@EXAMPLE.COM"
-    
-    # Create controller principal and keytab
-    echo "Creating controller principal and keytab..."
-    kadmin.local -q "addprinc -randkey kafka/controller@EXAMPLE.COM"
-    kadmin.local -q "ktadd -k /keytabs/kafka-keytabs/kafka-controller.keytab kafka/controller@EXAMPLE.COM"
-    
-    # Set proper permissions for keytabs
+    for i in 1 2 3; do
+        echo "Creating broker${i} principal and keytab..."
+        BROKER_FQDN="broker${i}.${DNS_DOMAIN}"
+        kadmin.local -q "addprinc -randkey kafka/${BROKER_FQDN}@${KRB5_REALM}"
+        kadmin.local -q "ktadd -k /mnt/keytabs/kafka-keytabs/broker${i}/broker${i}.keytab kafka/${BROKER_FQDN}@${KRB5_REALM}"
+    done
+
+    for i in 1 2 3; do
+        echo "Creating controller${i} principal and keytab..."
+        CONTROLLER_FQDN="controller${i}.${DNS_DOMAIN}"
+        kadmin.local -q "addprinc -randkey controller/${CONTROLLER_FQDN}@${KRB5_REALM}"
+        kadmin.local -q "ktadd -k /mnt/keytabs/kafka-keytabs/controller${i}/controller${i}.keytab controller/${CONTROLLER_FQDN}@${KRB5_REALM}"
+
+    done
+
     chmod 777 -R /keytabs
 }
 
-# Check KDC database and initialize if needed
 if [ ! -f /var/lib/krb5kdc/principal ] || [ ! -s /var/lib/krb5kdc/principal ]; then
     echo "No valid KDC database found. Initializing..."
     initialize_kdc
@@ -69,7 +80,6 @@ else
     fi
 fi
 
-# Start Kerberos services
 echo "Starting Kerberos services..."
 service krb5-kdc start
 if [ $? -ne 0 ]; then
@@ -99,9 +109,8 @@ else
     exit 1
 fi
 
-sudo chmod 777 -R /keytabs
+chmod 777 -R /keytabs
 
 echo "Kerberos setup completed successfully"
 
-# Keep container running and log to stdout
 tail -f /var/log/krb5kdc.log /var/log/kadmin.log 2>/dev/null

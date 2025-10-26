@@ -1,9 +1,11 @@
 FROM openjdk:17.0.1-jdk-slim
 
-RUN groupadd -r kafka && useradd -r -g kafka kafka
+ENV JMX_EXPORTER_HOME=/opt/jmx_exporter
+ENV JMX_EXPORTER_VERSION=1.0.1
 
-ENV KAFKA_OPTS="--enable-native-access=ALL-UNNAMED -Djava.security.auth.login.config=/opt/kafka/config/kraft/controller_server_jaas.conf -Djava.security.krb5.conf=/etc/krb5.conf"
-ENV KAFKA_HEAP_OPTS="-Xms10G -Xmx10G"
+ENV KAFKA_OPTS="-Djava.security.auth.login.config=/opt/kafka/config/controller_server_jaas.conf -Djava.security.krb5.conf=/etc/krb5.conf"
+ENV KAFKA_HEAP_OPTS="-Xms2G -Xmx6G"
+ENV EXTRA_ARGS="-javaagent:${JMX_EXPORTER_HOME}/jmx_prometheus_javaagent.jar=7071:${JMX_EXPORTER_HOME}/controller-metrics.yml"
 
 RUN apt-get update && \
     apt-get install -y \
@@ -16,24 +18,23 @@ RUN apt-get update && \
     mkdir /var/run/sshd
 
 WORKDIR /opt
+RUN mkdir -p ${JMX_EXPORTER_HOME}
 
-RUN wget https://downloads.apache.org/kafka/3.8.0/kafka_2.13-3.8.0.tgz && \
-    tar -xzf kafka_2.13-3.8.0.tgz && \
-    mv kafka_2.13-3.8.0 kafka && \
-    rm kafka_2.13-3.8.0.tgz
+RUN wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz && \
+    tar -xzf kafka_2.13-4.0.0.tgz && \
+    mv kafka_2.13-4.0.0 kafka && \
+    rm kafka_2.13-4.0.0.tgz
 
-COPY init-sh/starter-controller.sh /opt/kafka/bin/starter-controller.sh
-COPY config/controller_server_jaas.conf /opt/kafka/config/kraft/controller_server_jaas.conf
+RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
+    -O ${JMX_EXPORTER_HOME}/jmx_prometheus_javaagent.jar
+    
+COPY init-sh/controller-starter.sh /usr/bin/controller-starter.sh
 COPY config/krb5.conf /etc/krb5.conf
 
-RUN mkdir -p /opt/kafka/config/kraft/keys && \
-    mkdir -p /opt/kafka/config/kraft/keytabs && \
+RUN mkdir -p /opt/kafka/config/jks && \
+    mkdir -p /opt/kafka/config/keytabs && \
     mkdir /kafka && \
-    chmod +x /opt/kafka/bin/starter-controller.sh && \
-    chown -R kafka:kafka /opt/kafka && \
-    chown -R kafka:kafka /kafka && \
-    chmod 777 -R /opt/kafka/config/kraft
+    chmod +x /usr/bin/controller-starter.sh && \
+    chmod 777 -R /opt/kafka/config
 
-USER kafka
-
-CMD ["/opt/kafka/bin/starter-controller.sh"]
+CMD [ "controller-starter.sh" ]
