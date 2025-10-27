@@ -11,7 +11,7 @@ RUN chmod +x /usr/bin/cc-ui-starter.sh
 RUN npm ci
 RUN npm run build
 
-FROM ubuntu/nginx:1.26-24.10_beta
+FROM nginx
 
 RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
