@@ -71,7 +71,7 @@ resource "kubernetes_manifest" "kafka_statefulset" {
           containers = [
             {
               name  = "kafka"
-              image = "mucagriaktas/kafka:4.0.1"
+              image = "mucagriaktas/kafka_k8s:4.0.0"
               ports = [
                 {
                   containerPort = 9092
