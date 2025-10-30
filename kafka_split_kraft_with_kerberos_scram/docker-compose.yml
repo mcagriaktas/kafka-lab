@@ -94,8 +94,8 @@ services:
     volumes:
       - ./configs/kafka/controller1/controller.properties:/opt/kafka/config/controller.properties
       - ./configs/kafka/controller1/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
-      - ./configs/kafka/broker1/gssapi-admin-client.properties:/opt/kafka/config/gssapi-admin-client.properties
-      - ./configs/kafka/broker1/scram-admin-client.properties:/opt/kafka/config/scram-admin-client.properties
+      - ./configs/kafka/controller1/gssapi-admin-client.properties:/opt/kafka/config/gssapi-admin-client.properties
+      - ./configs/kafka/controller1/scram-admin-client.properties:/opt/kafka/config/scram-admin-client.properties
       - ./configs/prometheus/controller-metrics.yml:/opt/jmx_exporter/controller-metrics.yml
       - ./configs/kafka/controller1/jks/:/opt/kafka/config/jks/
       - ./configs/kafka/controller1/keytabs/:/opt/kafka/config/keytabs/
