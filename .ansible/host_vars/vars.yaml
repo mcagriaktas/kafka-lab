@@ -1,0 +1,68 @@
+github_repo_dir: "{{ playbook_dir }}/../../"
+java_version: openjdk:26-ea-17-slim
+ubuntu_version: ubuntu:25.04
+
+openjdk_folder_names:
+  - kafka_burrow/images/kafka/Dockerfile
+  - kafka_connector_kcctl/images/kafka/Dockerfile
+  - kafka_connector_kcctl/images/provectus/Dockerfile
+  - kafka_cruise_control_cc_ui/images/kafka/Dockerfile
+  - kafka_debezium/images/kafka/Dockerfile
+  - kafka_debezium/images/provectus/Dockerfile
+  - kafka_debezium/images/debezium/Dockerfile
+  - kafka_flink_sql/images/kafka/Dockerfile
+  - kafka_flink_sql/images/provectus/Dockerfile
+  - kafka_flink_sql/images/flink/Dockerfile
+  - kafka_jmeter_kloadgen/containers/images/kafka/Dockerfile
+  - kafka_jmeter_kloadgen/containers/images/provectus/Dockerfile
+  - kafka_jmeter_kloadgen/containers/images/kafka-schema-registry/Dockerfile
+  - kafka_julie_ops/images/kafka/Dockerfile
+  - kafka_julie_ops/images/kafka-julie/Dockerfile
+  - kafka_julie_ops/images/provectus/Dockerfile
+  - kafka_kraft_3_broker/images/kafka/Dockerfile
+  - kafka_kraft_3_broker/images/provectus/Dockerfile
+  - kafka_kraft_full_deployment/images/kafka/Dockerfile
+  - kafka_kraft_full_deployment/images/provectus/Dockerfile
+  - kafka_kraft_full_deployment/images/kafka_schema_registry/Dockerfile
+  - kafka_ksql/images/kafka/Dockerfile
+  - kafka_ksql/images/ksqldb/Dockerfile
+  - kafka_migration_zk_to_kraft/images/provectus/Dockerfile
+  - kafka_ksql/images/provectus/Dockerfile
+  - kafka_mirror_maker/images/kafka/Dockerfile
+  - kafka_mirror_maker/images/provectus/Dockerfile
+  - kafka_schema_registry/images/kafka/Dockerfile
+  - kafka_schema_registry/images/provectus/Dockerfile
+  - kafka_schema_registry/images/kafka_schema_registry/Dockerfile
+  - kafka_split_kraft_with_kerberos_scram/images/kafka/broker/Dockerfile
+  - kafka_split_kraft_with_kerberos_scram/images/kafka/controller/Dockerfile
+  - kafka_split_kraft_with_kerberos_scram/images/client/Dockerfile
+  - kafka_split_kraft_with_kerberos_scram/images/kafkabat/Dockerfile
+  - kafka_split_kraft_with_only_scram/images/kafka/broker/Dockerfile
+  - kafka_split_kraft_with_only_scram/images/kafka/controller/Dockerfile
+  - kafka_split_kraft_with_only_scram/images/provectus/Dockerfile
+  - kafka_split_kraft_with_sasl_plaintext/images/kafka/broker/Dockerfile
+  - kafka_split_kraft_with_sasl_plaintext/images/kafka/controller/Dockerfile
+  - kafka_split_kraft_with_sasl_plaintext/images/provectus/Dockerfile
+  - kafka_terraform_k8s/container/images/Dockerfile
+  - kafka_upgrade/images/provectus/Dockerfile
+  - kafka_zookeeper/images/kafka/Dockerfile
+  - kafka_zookeeper/images/zookeeper/Dockerfile
+  - kafka_zookeeper/images/provectus/Dockerfile
+
+linux_folder_name:
+  - kafka_burrow/images/prometheus/Dockerfile
+  - kafka_burrow/images/grafana/Dockerfile
+  - kafka_connector_kcctl/images/kafka_kcctl/Dockerfile
+  - kafka_connector_kcctl/images/kafka_connector/Dockerfile
+  - kafka_flink_sql/images/grafana/Dockerfile
+  - kafka_flink_sql/images/prometheus/Dockerfile
+  - kafka_jmeter_kloadgen/containers/images/grafana/Dockerfile
+  - kafka_jmeter_kloadgen/containers/images/prometheus/Dockerfile
+  - kafka_julie_ops/images/team-a/Dockerfile
+  - kafka_kraft_full_deployment/images/grafana/Dockerfile
+  - kafka_kraft_full_deployment/images/prometheus/Dockerfile
+  - kafka_migration_zk_to_kraft/images/kafka/Dockerfile
+  - kafka_migration_zk_to_kraft/images/zookeeper/Dockerfile
+  - kafka_split_kraft_with_kerberos_scram/images/kerberos/Dockerfile
+  - kafka_upgrade/images/kafka/Dockerfile
+  - kafka_upgrade/images/zookeeper/Dockerfile

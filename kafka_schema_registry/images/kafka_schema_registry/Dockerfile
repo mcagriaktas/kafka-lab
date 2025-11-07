@@ -1,4 +1,4 @@
-FROM openjdk:17-slim-bullseye
+FROM openjdk:26-ea-17-slim
 
 ENV CONFLUENT_KAFKA_VERSION=8.0.0
 ENV SCHEMA_REGISTRY_HOME=/opt/schema-registry

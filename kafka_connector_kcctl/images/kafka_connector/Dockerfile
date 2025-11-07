@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:25.04
 
 ENV KAFKA_VERSION=4.0.0
 ENV KAFKA_HOME=/opt/kafka

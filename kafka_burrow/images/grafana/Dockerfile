@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:25.04
 
 ENV GRAFANA_VERSION=10.4.14
 ENV GRAFANA_HOME=/opt/grafana

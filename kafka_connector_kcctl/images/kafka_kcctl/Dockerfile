@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:25.04
 
 ENV KAFKA_KCCTL_HOME=/opt/kafka_kcctl
 ENV KAFKA_KCCTL_VERSION=1.0.0.CR4

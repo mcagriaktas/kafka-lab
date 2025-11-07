@@ -1,4 +1,4 @@
-FROM openjdk:17-slim-bullseye
+FROM openjdk:26-ea-17-slim
 
 ENV DEBEZIUM_VERSION=3.1.1.Final
 ENV KAFKA_VERSION=4.0.0

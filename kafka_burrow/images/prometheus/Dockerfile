@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:25.04
 
 ENV PROMETHEUS_VERSION=2.45.0
 ENV PROMETHEUS_HOME=/opt/prometheus

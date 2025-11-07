@@ -1,4 +1,4 @@
-FROM openjdk:17-slim-bullseye
+FROM openjdk:26-ea-17-slim
 
 RUN apt-get update && \
     apt-get install -y curl && \

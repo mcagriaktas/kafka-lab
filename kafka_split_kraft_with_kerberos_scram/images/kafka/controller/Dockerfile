@@ -1,4 +1,4 @@
-FROM openjdk:17.0.1-jdk-slim
+FROM openjdk:26-ea-17-slim
 
 ENV JMX_EXPORTER_HOME=/opt/jmx_exporter
 ENV JMX_EXPORTER_VERSION=1.0.1

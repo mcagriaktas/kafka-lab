@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM openjdk:26-ea-17-slim
 
 ENV KAFKA_UI_VERSION=v0.7.2
 

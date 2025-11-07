@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim
+FROM openjdk:26-ea-17-slim
 
 ENV JAVA_OPTS="-Xmx512m -Xms256m"
 ENV JULIE_CONFIG_PATH="/opt/kafka_julie/config"

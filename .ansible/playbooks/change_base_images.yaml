@@ -1,0 +1,25 @@
+---
+- name: Update base images in Dockerfiles
+  hosts: localhost
+  vars_files:
+    - ../host_vars/vars.yaml
+  gather_facts: no
+
+  tasks:
+    - name: Update Dockerfile JDK base image
+      lineinfile:
+        path: "{{ github_repo_dir }}/{{ item }}"
+        regexp: "^FROM "
+        line: "FROM {{ java_version }}"
+        backup: no
+      loop: "{{ openjdk_folder_names }}"
+      register: dockerfile_updates_jdk
+    
+    - name: Update Dockerfile Ubuntu base image 
+      lineinfile:
+        path: "{{ github_repo_dir }}/{{ item }}"
+        regexp: "^FROM "
+        line: "FROM {{ ubuntu_version }}"
+        backup: no
+      loop: "{{ linux_folder_name }}"
+      register: dockerfile_updates_ubuntu

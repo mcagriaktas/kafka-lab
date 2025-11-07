@@ -1,4 +1,4 @@
-FROM openjdk:17-slim-bullseye
+FROM openjdk:26-ea-17-slim
 
 ENV ZOOKEEPER_HOME=/opt/zookeeper
 ENV ZOOKEEPER_DATA_HOME=/opt/data/zookeeper

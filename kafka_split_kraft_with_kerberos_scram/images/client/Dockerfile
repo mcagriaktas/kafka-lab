@@ -1,4 +1,4 @@
-FROM openjdk:17.0.1-jdk-slim
+FROM openjdk:26-ea-17-slim
 
 WORKDIR /mnt 
 RUN chmod 777 -R /mnt

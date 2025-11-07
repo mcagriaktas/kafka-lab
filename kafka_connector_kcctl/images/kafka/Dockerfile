@@ -1,4 +1,4 @@
-FROM openjdk:17-slim-bullseye
+FROM openjdk:26-ea-17-slim
 
 ENV KAFKA_HOME=/opt/kafka
 ENV KAFKA_DATA_DIR=/opt/data
