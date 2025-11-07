@@ -6,8 +6,9 @@ Also, check the logs folder. When you create a topic or interact with any Kafka 
 
 There is two deployment with SASL_SSL authentication, located in the folder named `kafka_split_kraft_with_kerberos_scram` and `kafka_split_kraft_with_only_scram`. I include fast deployment options for authentication types like SASL_PLAINTEXT because the main goal of this repository is to understand each Kafka component and how to deploy and use them effectively, the folder name is `kafka_split_kraft_with_sasl_plaintext`.
 
-
-<img width="512" height="512" alt="kafka-lab-icon" src="https://github.com/user-attachments/assets/ed69edf1-a774-4e4e-9bf3-c7c68aae92d5" />
+<p align="center">
+    <img width="512" height="512" alt="kafka-lab-icon" src="https://github.com/user-attachments/assets/ed69edf1-a774-4e4e-9bf3-c7c68aae92d5" />
+</p>
 
 ---
 
