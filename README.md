@@ -11,6 +11,11 @@ There is two deployment with SASL_SSL authentication, located in the folder name
 
 ---
 
+## Repository Wiki:
+
+You can check all folder scenarios and version matrices in the wiki. Check it out: `https://github.com/mcagriaktas/kafka-lab/wiki`
+
+---
 
 ## 🔧 Prerequisites
 
