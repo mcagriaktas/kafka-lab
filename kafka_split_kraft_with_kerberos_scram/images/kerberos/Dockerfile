@@ -12,7 +12,7 @@ RUN apt-get update && \
     krb5-config \
     libterm-readline-perl-perl \
     dialog \
-    netcat \
+    netcat-traditional \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

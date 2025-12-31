@@ -1,4 +1,4 @@
-FROM openjdk:26-ea-17-slim
+FROM openjdk:22-jdk-slim
 
 RUN apt update && apt install -y wget
 

@@ -13,9 +13,9 @@ kafka:
         verify-ssl: true
 
       properties:
-        "security.protocol": SASL_SSL
-        "sasl.mechanism": SCRAM-SHA-256
-        "sasl.jaas.config": org.apache.kafka.common.security.scram.ScramLoginModule required username="kafkaui" password="cagri3541";
+        security.protocol: SASL_SSL
+        sasl.mechanism: SCRAM-SHA-256
+        sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="kafkaui" password="cagri3541";
 
 # ======================================================
 # Server Configuration

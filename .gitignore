@@ -48,7 +48,7 @@ metals.sbt
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-
+**/.vscode
 # OS-specific
 .DS_Store
 Thumbs.db
