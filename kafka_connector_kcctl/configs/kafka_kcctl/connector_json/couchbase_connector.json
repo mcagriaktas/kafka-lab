@@ -1,14 +1,30 @@
 {
     "connector.class": "com.couchbase.connect.kafka.CouchbaseSinkConnector",
-    "tasks.max": "1",
+    "tasks.max": "3",
     "topics": "couchbase-topic",
+    
     "couchbase.seed.nodes": "172.80.0.60",
     "couchbase.bucket": "cagri-bucket",
     "couchbase.username": "cagri",
     "couchbase.password": "35413541",
+    
     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": false,
+    
     "couchbase.document.id": "/id",
-    "couchbase.collection": "_default._default"
+    "couchbase.collection": "_default._default",
+    
+    "couchbase.durability": "NONE",
+    "couchbase.persist.to": "NONE",
+    "couchbase.replicate.to": "NONE",
+    
+    "batch.size": "1000",
+    "linger.ms": "100",
+    
+    "errors.tolerance": "all",
+    "errors.log.enable": "true",
+    "errors.log.include.messages": "true",
+    "errors.deadletterqueue.topic.name": "dlq-couchbase",
+    "errors.deadletterqueue.topic.replication.factor": "3"
 }

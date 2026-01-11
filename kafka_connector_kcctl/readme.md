@@ -78,69 +78,77 @@ docker exec -it kafka-kcctl kcctl describe connector couchbase-sink
 ## ⚡ Quick Start
 
 1. **Start the stack:**
-   ```bash
-   docker-compose up -d
-   ```
+```bash
+docker-compose up -d --build
+```
 
 2. **Initialize Couchbase cluster and bucket:**
-   ```bash
-   # Initialize cluster (inside Couchbase container)
-   docker exec -it couchbase couchbase-cli cluster-init --cluster 172.80.0.60 --cluster-username cagri --cluster-password 35413541 --services=data,index,query --cluster-ramsize=512 --cluster-index-ramsize=256
+```bash
+# Initialize cluster (inside Couchbase container)
+docker exec -it couchbase couchbase-cli cluster-init --cluster 172.80.0.60 --cluster-username cagri --cluster-password 35413541 --services=data,index,query --cluster-ramsize=512 --cluster-index-ramsize=256
 
-   # Create bucket
-   docker exec -it couchbase couchbase-cli bucket-create --cluster 172.80.0.60 --username cagri --password 35413541 --bucket cagri-bucket --bucket-type couchbase --bucket-ramsize 100 --bucket-replica 1 --bucket-eviction-policy valueOnly --enable-flush 1 --compression-mode passive
-   ```
+# Create bucket
+docker exec -it couchbase couchbase-cli bucket-create --cluster 172.80.0.60 --username cagri --password 35413541 --bucket cagri-bucket --bucket-type couchbase --bucket-ramsize 100 --bucket-replica 1 --bucket-eviction-policy valueOnly --enable-flush 1 --compression-mode passive
+```
 
 3. **Create Kafka topic:**
-   ```bash
-   docker exec -it kafka1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 --replication-factor 2 --partitions 3 --topic couchbase-topic
-   ```
+```bash
+docker exec -it kafka1 /opt/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092 --replication-factor 2 --partitions 3 --topic couchbase-topic
+```
 
 4. **Deploy Couchbase Sink Connector**
 
-   - **Option A: Using REST API**
-     ```bash
-     curl -X PUT http://localhost:8083/connectors/couchbase-sink/config        -H "Content-Type: application/json" -d '{
-         "connector.class": "com.couchbase.connect.kafka.CouchbaseSinkConnector",
-         "tasks.max": "1",
-         "topics": "couchbase-topic",
-         "couchbase.seed.nodes": "172.80.0.60",
-         "couchbase.bucket": "cagri-bucket",
-         "couchbase.username": "cagri",
-         "couchbase.password": "35413541",
-         "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-         "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-         "value.converter.schemas.enable": false,
-         "couchbase.document.id": "/id",
-         "couchbase.collection": "_default._default"
-     }'
-     ```
+**Option A: Using REST API**
+```bash
+curl -X PUT http://localhost:8083/connectors/couchbase-sink/config        -H "Content-Type: application/json" -d '{
+    "connector.class": "com.couchbase.connect.kafka.CouchbaseSinkConnector",
+    "tasks.max": "1",
+    "topics": "couchbase-topic",
+    "couchbase.seed.nodes": "172.80.0.60",
+    "couchbase.bucket": "cagri-bucket",
+    "couchbase.username": "cagri",
+    "couchbase.password": "35413541",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": false,
+    "couchbase.document.id": "/id",
+    "couchbase.collection": "_default._default"
+}'
+```
 
-   - **Option B: Using kcctl**
-     ```bash
-     docker exec -it kafka-kcctl kcctl apply -f /opt/kafka_kcctl/connector_json/couchbase_connector.json --name couchbase
-     ```
+**Option B: Using kcctl**
+```bash
+docker exec -it kafka-kcctl /opt/kafka_kcctl/bin/kcctl apply -f /opt/kafka_kcctl/connector_json/couchbase_connector.json --name couchbase
+```
 
 5. **Produce example data:**
-   ```bash
-   python data_generator/producer.py
-   ```
+```bash
+python data_generator/producer.py
+```
 
-6. **Verify results:**
-   - **Connector status:**  
-     REST: `curl -X GET http://localhost:8083/connectors/couchbase-sink/status`  
-     kcctl: `docker exec -it kafka-kcctl kcctl get connectors`
-   - **Couchbase bucket:**  
-     Open [http://localhost:8091](http://localhost:8091), check documents in `cagri-bucket`.
+6. **Verify results:** 
+
+REST: 
+```bash
+curl -X GET http://localhost:8083/connectors/couchbase-sink/status
+```
+
+KCCTL:
+```BASH
+docker exec -it kafka-kcctl /opt/kafka_kcctl/bin/kcctl get connectors
+```
+
+**Couchbase bucket:**  
+Open [http://localhost:8091](http://localhost:8091), check documents in `cagri-bucket`.
 
 ---
 
 ## 🛠️ Customization
 
-- **Change topics, bucket, or connector parameters:**  
-  Edit `configs/connect/couchbase_connector.json` (or modify REST payload as above).
-- **Add more brokers or connectors:**  
-  Adjust `docker-compose.yml` and relevant configs for scaling.
+**Change topics, bucket, or connector parameters:**  
+Edit `configs/connect/couchbase_connector.json` (or modify REST payload as above).
+**Add more brokers or connectors:**  
+Adjust `docker-compose.yml` and relevant configs for scaling.
 
 ---
 

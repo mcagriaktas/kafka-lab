@@ -4,7 +4,7 @@ kafka:
       bootstrapServers: kafka1:9092,kafka2:9092,kafka3:9092
       kafkaConnect:
         - name: cagri_connector
-          address: http://172.80.0.14:8083
+          address: http://172.80.0.25:8083
           
 server:
   port: 8080
