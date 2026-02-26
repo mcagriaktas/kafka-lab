@@ -1,0 +1,7 @@
+dn: uid=cagri,ou=users,dc=dahbest,dc=com
+objectClass: inetOrgPerson
+objectClass: top
+cn: Cagri Aktas
+sn: Aktas
+uid: cagri
+userPassword: {SSHA}fZtpvM6skXhG6jkoBLUll24089cyoiRj

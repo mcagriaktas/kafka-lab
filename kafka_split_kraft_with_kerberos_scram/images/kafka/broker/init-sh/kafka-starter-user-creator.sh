@@ -9,7 +9,7 @@ echo "Kafka Admin user creating."
     --alter \
     --add-config "SCRAM-SHA-256=[password=cagri3541]" \
     --entity-type users \
-    --entity-name "kafka"
+    --entity-name "broker"
 
 echo ""
 
@@ -18,7 +18,7 @@ echo "Kafka Admin user's ACLS adding."
     --bootstrap-server broker1.dahbest.kfn:9092,broker2.dahbest.kfn:9092,broker3.dahbest.kfn:9092 \
     --command-config /opt/kafka/config/gssapi-admin-client.properties \
     --add \
-    --allow-principal "User:kafka" \
+    --allow-principal "User:broker" \
     --operation All \
     --topic '*' \
     --group '*' \

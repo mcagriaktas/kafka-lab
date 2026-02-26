@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # --- Global Config ---
-SCRAM_USER = "kafka"
+SCRAM_USER = "client"
 SCRAM_PASSWORD = "cagri3541"
 TOPIC_NAME = "cagri-topic"
 MESSAGE_COUNT = 1000

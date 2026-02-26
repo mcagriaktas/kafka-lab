@@ -1,0 +1,5 @@
+dn: cn=users,ou=groups,dc=dahbest,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: users
+uniqueMember: uid=users,ou=users,dc=dahbest,dc=com

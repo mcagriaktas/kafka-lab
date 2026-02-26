@@ -29,4 +29,6 @@ if [[ ! -f /opt/data/metadata/metadata.properties ]]; then
     /opt/kafka/bin/kafka-storage.sh format --config /opt/kafka/config/broker.properties --cluster-id h96i_0NbQrqSDy33dP9U7Q --ignore-formatted
 fi
 
+sleep 7
+
 /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/broker.properties

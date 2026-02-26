@@ -4,7 +4,7 @@ RUN apt update && apt install -y wget
 
 WORKDIR /opt
 
-RUN wget https://github.com/kafbat/kafka-ui/releases/download/v1.2.0/api-v1.2.0.jar -O kafka-ui-api-v1.2.0.jar
+RUN wget https://github.com/kafbat/kafka-ui/releases/download/v1.4.2/api-v1.4.2.jar -O kafka-ui-api-v1.4.2.jar
 
 RUN mkdir -p /opt/jks
 

@@ -8,14 +8,14 @@ import java.util.Properties
 import java.time.Duration
 import scala.util.Random
 
-@main def main(): Unit = {
+@main def producer(): Unit = {
   val logger = LoggerFactory.getLogger("KafkaProducer")
 
   // Enable debug (optional)
   System.setProperty("sun.security.krb5.debug", "true")
   System.setProperty("java.security.debug", "gssloginconfig,configparser,logincontext")
   System.setProperty("java.security.krb5.conf", "/etc/krb5.conf")
-  System.setProperty("java.security.auth.login.config", "/mnt/scripts/scala/client_jaas.conf")
+  System.setProperty("java.security.auth.login.config", "/mnt/keytabs/client_jaas.conf")
 
   val props = new Properties()
   props.put("bootstrap.servers", "broker1.dahbest.kfn:9092,broker2.dahbest.kfn:9092,broker3.dahbest.kfn:9092")
@@ -23,15 +23,14 @@ import scala.util.Random
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("security.protocol", "SASL_SSL")
   props.put("sasl.mechanism", "GSSAPI")
-  props.put("sasl.kerberos.service.name", "kafka")
+  props.put("sasl.kerberos.service.name", "broker")
 
   props.put("ssl.truststore.location", "/mnt/jks/client.truststore.jks")
   props.put("ssl.truststore.password", "cagri3541")
   props.put("ssl.truststore.type", "JKS")
-
+  props.put("ssl.endpoint.identification.algorithm", "")
   props.put("sasl.kerberos.min.time.before.relogin", "60000")
   props.put("enable.idempotence", "false")
-  props.put("ssl.endpoint.identification.algorithm", "HTTPS")
 
   val topic = "cagri-topic"
   val list = List(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)

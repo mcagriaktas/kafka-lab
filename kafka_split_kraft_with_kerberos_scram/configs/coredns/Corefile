@@ -6,7 +6,7 @@ dahbest.kfn:53 {
 }
 
 .:53 {
-    forward . 172.80.0.11 {
+    forward . 8.8.8.8 8.8.4.4 {
         max_concurrent 1000
         policy sequential
     }

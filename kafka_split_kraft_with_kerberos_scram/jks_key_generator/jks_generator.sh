@@ -7,7 +7,7 @@ echo "===== Starting JKS Generator ====="
 # Configuration
 # ----------------------------
 PASSWORD="cagri3541"
-NODE_NAMES=("broker1" "broker2" "broker3" "controller1" "controller2" "controller3" "kafka-ui")
+NODE_NAMES=("broker1" "broker2" "broker3" "controller1" "controller2" "controller3")
 DNS_NAME="dahbest.kfn"
 KEYSTORE_TYPE="PKCS12"
 VALIDITY_DAYS=3650
@@ -54,7 +54,7 @@ for NODE in "${NODE_NAMES[@]}"; do
         -storepass "$PASSWORD" \
         -keypass "$PASSWORD" \
         -dname "CN=$NODE,OU=Kafka,O=Example,L=City,ST=State,C=TR" \
-        -ext "SAN=dns:$NODE,dns:$NODE.$DNS_NAME" \
+        -ext "SAN=dns:$NODE,dns:$NODE.$DNS_NAME,DNS:localhost,IP:127.0.0.1" \
         -storetype "$KEYSTORE_TYPE"
 
     # 2️⃣ Generate CSR
@@ -76,7 +76,7 @@ for NODE in "${NODE_NAMES[@]}"; do
         -CAcreateserial \
         -passin pass:"$PASSWORD" \
         -extensions v3_req \
-        -extfile <(echo -e "[v3_req]\nsubjectAltName=DNS:$NODE,DNS:$NODE.$DNS_NAME")
+        -extfile <(echo -e "[v3_req]\nsubjectAltName=DNS:$NODE,DNS:$NODE.$DNS_NAME,DNS:localhost,IP:127.0.0.1")
 
     # 4️⃣ Import Root CA into keystore
     echo "Importing Root CA into keystore..."
@@ -121,6 +121,19 @@ if [[ ! -f "$KEYS_DIR/client/client.truststore.jks" ]]; then
         -alias rootCA \
         -file "$ROOTS_DIR/rootCA.crt" \
         -keystore "$KEYS_DIR/client/client.truststore.jks" \
+        -storepass "$PASSWORD" \
+        -noprompt \
+        -storetype "$KEYSTORE_TYPE"
+fi
+
+echo ""
+echo "====[ Creating kafka-ui truststore and PEM ]===="
+if [[ ! -f "$KEYS_DIR/kafka-ui/kafka-ui.truststore.jks" ]]; then
+    echo "Creating kafka-ui.truststore.jks..."
+    keytool -importcert \
+        -alias rootCA \
+        -file "$ROOTS_DIR/rootCA.crt" \
+        -keystore "$KEYS_DIR/kafka-ui/kafka-ui.truststore.jks" \
         -storepass "$PASSWORD" \
         -noprompt \
         -storetype "$KEYSTORE_TYPE"

@@ -27,9 +27,8 @@ RUN wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz && \
 
 RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
     -O ${JMX_EXPORTER_HOME}/jmx_prometheus_javaagent.jar
-    
+
 COPY init-sh/controller-starter.sh /usr/bin/controller-starter.sh
-COPY config/krb5.conf /etc/krb5.conf
 
 RUN mkdir -p /opt/kafka/config/jks && \
     mkdir -p /opt/kafka/config/keytabs && \

@@ -27,10 +27,9 @@ RUN wget https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz && \
 
 RUN wget https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/${JMX_EXPORTER_VERSION}/jmx_prometheus_javaagent-${JMX_EXPORTER_VERSION}.jar \
     -O ${JMX_EXPORTER_HOME}/jmx_prometheus_javaagent.jar
-    
+
 COPY init-sh/broker-starter.sh /usr/bin/broker-starter.sh
 COPY init-sh/kafka-starter-user-creator.sh /usr/bin/kafka-starter-user-creator.sh
-COPY config/krb5.conf /etc/krb5.conf
 
 RUN mkdir -p /opt/kafka/config/jks && \
     mkdir -p /opt/kafka/config/keytabs && \

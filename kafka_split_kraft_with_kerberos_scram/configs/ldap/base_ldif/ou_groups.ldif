@@ -1,0 +1,3 @@
+dn: ou=groups,dc=dahbest,dc=com
+objectClass: organizationalUnit
+ou: groups

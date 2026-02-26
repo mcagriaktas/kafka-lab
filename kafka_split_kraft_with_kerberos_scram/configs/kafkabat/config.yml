@@ -29,8 +29,68 @@ server:
 # Configuration for HTTP clients used by the app.
 # ======================================================
 webclient:
-  response-timeout-ms: 20000        # Timeout for all outgoing HTTP requests
-  max-in-memory-buffer-size: 20MB   # Maximum buffer size for handling responses
+  response-timeout-ms: 20000
+  max-in-memory-buffer-size: 20MB
+
+# ======================================================
+# LDAP Configuration
+# Used for user and group resolution in RBAC when using LDAP.
+# ======================================================
+auth:
+  type: LDAP
+
+spring:
+  ldap:
+    urls: ldap://ldap:389
+    base: "uid={0},ou=users,dc=dahbest,dc=com"
+    user-filter-search-base: "ou=users,dc=dahbest,dc=com"
+    user-filter-search-filter: "(&(uid={0})(objectClass=inetOrgPerson))"
+    group-filter-search-base: "ou=groups,dc=dahbest,dc=com"
+    group-filter-search-filter: "(&(objectClass=groupOfUniqueNames)(uniqueMember={0}))"
+
+# ======================================================
+# Role-Based Access Control (RBAC)
+# Configure roles, user/group bindings, and permissions.
+# ======================================================
+rbac:
+  roles:
+    - name: "admins"
+      clusters:
+        - cagri_cluster
+
+      subjects:
+        - provider: ldap
+          type: group
+          value: "admins"
+
+      permissions:
+        - resource: applicationconfig
+          actions: [all]
+
+        - resource: clusterconfig
+          actions: [all]
+
+        - resource: schema
+          value: ".*"
+          actions: [all]
+
+        - resource: topic
+          value: ".*"
+          actions: [all]
+
+        - resource: consumer
+          value: ".*"
+          actions: [all]
+
+        - resource: connect
+          value: ".*"
+          actions: [all]
+
+        - resource: ksql
+          actions: [all]
+
+        - resource: acl
+          actions: [all]
 
 # ======================================================
 # Spring Boot Actuator

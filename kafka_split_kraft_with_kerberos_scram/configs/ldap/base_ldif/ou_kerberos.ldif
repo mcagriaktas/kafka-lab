@@ -1,0 +1,3 @@
+dn: ou=kerberos,dc=dahbest,dc=com
+objectClass: organizationalUnit
+ou: kerberos

@@ -1,0 +1,5 @@
+dn: cn=admins,ou=groups,dc=dahbest,dc=com
+objectClass: top
+objectClass: groupOfUniqueNames
+cn: admins
+uniqueMember: uid=cagri,ou=users,dc=dahbest,dc=com

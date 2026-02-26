@@ -1,6 +1,5 @@
 # Repo
 **/logs
-
 # Python
 __pycache__/
 *.py[cod]
@@ -28,7 +27,6 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
 # Scala
 *.class
 *.log
@@ -37,12 +35,28 @@ target/
 project/target/
 project/project/
 .bsp/
-
 # Metals (Scala Language Server)
 .metals/
 .bloop/
 project/.bloop/
 metals.sbt
+
+# .NET / C#
+**/[Bb]in/
+**/[Oo]bj/
+**/out/
+**/[Pp]ublish/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.pdb
+TestResults/
+.vs/
+**/*.nupkg
+**/*.snupkg
+**/*.binlog
+artifacts/
 
 # VS Code
 .vscode/*
@@ -55,7 +69,6 @@ metals.sbt
 # OS-specific
 .DS_Store
 Thumbs.db
-
 # IDE-specific
 .idea/
 *.swp

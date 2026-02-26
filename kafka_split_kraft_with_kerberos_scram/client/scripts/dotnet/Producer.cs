@@ -11,12 +11,14 @@ namespace KafkaKeytabProducer
             Console.WriteLine("Starting Kafka Producer with SASL/SSL and Keytab Authentication");
 
             // Configuration
-            string bootstrapServers = "broker:9092";
-            string topicName = "test-topic";
-            string keytabPath = "/mnt/keytabs/client-client.keytab";
-            string principal = "client/client@EXAMPLE.COM";
-            string sslCaLocation = "/mnt/home/dotnet/client.pem";
-            string saslKerberosServiceName = "kafka";
+            string bootstrapServers = "broker1.dahbest.kfn:9092,broker2.dahbest.kfn:9092,broker3.dahbest.kfn:9092";
+            string topicName = "cagri-topic";
+            string keytabPath = "/mnt/keytabs/client.keytab";
+            string principal = "client/client.dahbest.kfn@DAHBEST.KFN";
+            string sslCaLocation = "/mnt/jks/client.pem";
+            string saslKerberosServiceName = "broker";
+
+            int message_count = 100;
 
             // Setup Kerberos environment
             Environment.SetEnvironmentVariable("KRB5_CLIENT_KTNAME", keytabPath);
@@ -44,18 +46,21 @@ namespace KafkaKeytabProducer
                     string key = "message-key";
                     string value = $"Hello from .NET Producer at {DateTime.Now}";
 
-                    try
+                    for (int i = 0; i < message_count; i++)
                     {
-                        var deliveryResult = await producer.ProduceAsync(
-                            topicName,
-                            new Message<string, string> { Key = key, Value = value }
-                        );
+                        try
+                        {
+                            var deliveryResult = await producer.ProduceAsync(
+                                topicName,
+                                new Message<string, string> { Key = key, Value = value }
+                            );
 
-                        Console.WriteLine($"Message delivered to: {deliveryResult.TopicPartitionOffset}");
-                    }
-                    catch (ProduceException<string, string> ex)
-                    {
-                        Console.WriteLine($"Failed to deliver message: {ex.Message}");
+                            Console.WriteLine($"Message delivered to: {deliveryResult.TopicPartitionOffset}");
+                        }
+                        catch (ProduceException<string, string> ex)
+                        {
+                            Console.WriteLine($"Failed to deliver message: {ex.Message}");
+                        }
                     }
                 }
 
