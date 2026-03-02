@@ -66,6 +66,8 @@ initialize_kdc() {
     echo "Creating admin principal..."
     kadmin.local -q "addprinc -pw ${KRB5_ADMIN_PASSWORD} admin/admin@${KRB5_REALM}"
 
+    # ------------------------------------------------------------------------------------------
+
     if [[ -f /mnt/keytabs/client/client.keytab ]]; then
         rm -f /mnt/keytabs/client/client.keytab
         echo "Client keytab already exists, removing..."
@@ -74,6 +76,20 @@ initialize_kdc() {
     CLIENT_FQDN="client.${DNS_DOMAIN}"
     kadmin.local -q "addprinc -randkey client/${CLIENT_FQDN}@${KRB5_REALM}"
     kadmin.local -q "ktadd -k /mnt/keytabs/client/client.keytab client/${CLIENT_FQDN}@${KRB5_REALM}"
+
+    # --------------------------------------------------------------------------------------------
+
+    if [[ -f /mnt/keytabs/broker1/kafka-admin.keytab ]]; then
+        rm -f /mnt/keytabs/broker1/kafka-admin.keytab
+        echo "Client keytab already exists, removing..."
+    fi
+    echo "Creating kafka-admin principal and keytab..."
+    CLIENT_FQDN="kafka-admin.${DNS_DOMAIN}"
+    kadmin.local -q "addprinc -randkey kafka-admin/${CLIENT_FQDN}@${KRB5_REALM}"
+    kadmin.local -q "ktadd -k /mnt/keytabs/broker1/kafka-admin.keytab kafka-admin/${CLIENT_FQDN}@${KRB5_REALM}"
+    cp /mnt/keytabs/broker1/kafka-admin.keytab /mnt/keytabs/controller1/kafka-admin.keytab
+    
+    # ---------------------------------------------------------------------------------------------
 
     for i in 1 2 3; do
         if [[ -f /mnt/keytabs/broker${i}/broker${i}.keytab ]]; then
@@ -89,6 +105,8 @@ initialize_kdc() {
         kadmin.local -q "ktadd -k /mnt/keytabs/broker${i}/broker${i}.keytab broker/${BROKER_FQDN}@${KRB5_REALM}"
         kadmin.local -q "ktadd -k /mnt/keytabs/broker${i}/broker${i}.keytab controller/${BROKER_FQDN}@${KRB5_REALM}"
     done
+
+    # -------------------------------------------------------------------------------------------------
 
     for i in 1 2 3; do
         if [[ -f /mnt/keytabs/controller${i}/controller${i}.keytab ]]; then

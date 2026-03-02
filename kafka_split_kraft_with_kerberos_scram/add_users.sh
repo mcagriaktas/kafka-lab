@@ -100,9 +100,10 @@ create_keytab() {
     PROGRESS_PID=$!
 
     if output=$(docker exec kerberos kadmin.local -q "addprinc -randkey $principle/$hostname@DAHBEST.KFN" 2>&1) && \
-       output2=$(docker exec kerberos kadmin.local -q "ktadd -k /keytabs/client-keytabs/$principle-$hostname.keytab $principle/$hostname@DAHBEST.KFN" 2>&1); then
+       output2=$(docker exec kerberos kadmin.local -q "ktadd -k /mnt/keytabs/client/$principle.keytab $principle/$hostname.dahbest.kfn@DAHBEST.KFN" 2>&1); then
         stop_progress $PROGRESS_PID
         echo "✅ Keytab created successfully"
+        echo "➡️ You can find the keytab in client/keytabs (the path volumed in client container!)
     else
         stop_progress $PROGRESS_PID
         echo "❌ Failed to create keytab: $output $output2"
