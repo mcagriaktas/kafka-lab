@@ -1,0 +1,46 @@
+; coredns/dahbest.kfn.db
+; SOA record MUST be first with explicit FQDN (trailing dot)
+dahbest.kfn. 3600 IN SOA sns.dns.icann.org. noc.dns.icann.org. (
+                2024010101 ; serial
+                7200       ; refresh (2 hours)
+                3600       ; retry (1 hour)
+                1209600    ; expire (2 weeks)
+                3600       ; minimum (1 hour)
+                )
+
+; NS record for the zone
+; ================= Infrastructure ===========
+dahbest.kfn. 3600 IN NS dns.dahbest.kfn.
+coredns                             3600 IN A 172.80.0.40
+haproxy.dahbest.kfn.                3600 IN A 172.80.0.57
+
+; ================= Kafka Clusters ==========
+; A records (MUST use FQDNs with trailing dots)
+cluster-a.dahbest.kfn.            IN A 172.80.0.57
+cluster-b.dahbest.kfn.            IN A 172.80.0.57
+
+; A Cluster
+cluster-a-1.dahbest.kfn.          IN A 172.80.0.57
+cluster-a-2.dahbest.kfn.          IN A 172.80.0.57
+cluster-a-3.dahbest.kfn.          IN A 172.80.0.57
+broker1-a.dahbest.kfn.            3600 IN A 172.80.0.11
+broker2-a.dahbest.kfn.            3600 IN A 172.80.0.12
+broker3-a.dahbest.kfn.            3600 IN A 172.80.0.13
+controller1-a.dahbest.kfn.        3600 IN A 172.80.0.21
+
+; B Cluster
+cluster-b-1.dahbest.kfn.          IN A 172.80.0.57
+cluster-b-2.dahbest.kfn.          IN A 172.80.0.57
+cluster-b-3.dahbest.kfn.          IN A 172.80.0.57
+broker1-b.dahbest.kfn.            3600 IN A 172.80.0.14
+broker2-b.dahbest.kfn.            3600 IN A 172.80.0.15
+broker3-b.dahbest.kfn.            3600 IN A 172.80.0.16
+controller1-b.dahbest.kfn.        3600 IN A 172.80.0.22
+
+; Kroxy
+kroxy-a.dahbest.kfn.            3600 IN A 172.80.0.43
+
+; External Nodes
+client.dahbest.kfn.             3600 IN A 172.80.0.31
+kafka-ui.dahbest.kfn.           3600 IN A 172.80.0.17
+keycloak.dahbest.kfn.           3600 IN A 172.80.0.58
