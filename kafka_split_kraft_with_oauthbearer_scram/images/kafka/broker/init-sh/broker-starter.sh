@@ -40,6 +40,6 @@ if [[ $HOSTNAME == "broker1" ]]; then
     kafka-starter-user-creator.sh &
 fi
 
-sleep 10
+sleep 25
 
 /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/broker.properties

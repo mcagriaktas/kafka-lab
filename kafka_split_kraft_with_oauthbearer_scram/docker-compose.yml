@@ -10,8 +10,9 @@ services:
     volumes:
       - ./configs/kafka/broker1/broker.properties:/opt/kafka/config/broker.properties
       - ./configs/kafka/broker1/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
-      - ./configs/kafka/broker1/jks/:/opt/kafka/config/jks/
       - ./configs/kafka/broker1/oauthbearer-admin-client.properties:/opt/kafka/config/oauthbearer-admin-client.properties
+      - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
+      - ./configs/kafka/broker1/jks/:/opt/kafka/config/jks/
       # - ./logs/kafka/broker1/data:/opt/data/
       # - ./logs/kafka/broker1/logs:/opt/kafka/logs/
     networks:
@@ -34,6 +35,7 @@ services:
       - ./configs/kafka/broker2/broker.properties:/opt/kafka/config/broker.properties
       - ./configs/kafka/broker2/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
       - ./configs/kafka/broker2/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
       # - ./logs/kafka/broker2/data:/opt/data/
       # - ./logs/kafka/broker2/logs:/opt/kafka/logs/
     networks:
@@ -56,6 +58,7 @@ services:
       - ./configs/kafka/broker3/broker.properties:/opt/kafka/config/broker.properties
       - ./configs/kafka/broker3/broker_server_jaas.conf:/opt/kafka/config/broker_server_jaas.conf
       - ./configs/kafka/broker3/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
       # - ./logs/kafka/broker3/data:/opt/data/
       # - ./logs/kafka/broker3/logs:/opt/kafka/logs/
     networks:
@@ -75,8 +78,9 @@ services:
     volumes:
       - ./configs/kafka/controller1/controller.properties:/opt/kafka/config/controller.properties
       - ./configs/kafka/controller1/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
-      - ./configs/kafka/controller1/jks/:/opt/kafka/config/jks/
       - ./configs/kafka/controller1/oauthbearer-admin-client.properties:/opt/kafka/config/oauthbearer-admin-client.properties
+      - ./configs/kafka/controller1/jks/:/opt/kafka/config/jks/
+      - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
       # - ./logs/kafka/controller1/data:/opt/data/
       # - ./logs/kafka/controller1/logs:/opt/kafka/logs/
     networks:
@@ -97,7 +101,7 @@ services:
       - ./configs/kafka/controller2/controller.properties:/opt/kafka/config/controller.properties
       - ./configs/kafka/controller2/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
       - ./configs/kafka/controller2/jks/:/opt/kafka/config/jks/
-      - ./configs/kafka/controller2/oauthbearer-admin-client.properties:/opt/kafka/config/oauthbearer-admin-client.properties
+      - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
       # - ./logs/kafka/controller2/data:/opt/data/
       # - ./logs/kafka/controller2/logs:/opt/kafka/logs/
     networks:
@@ -118,12 +122,12 @@ services:
       - ./configs/kafka/controller3/controller.properties:/opt/kafka/config/controller.properties
       - ./configs/kafka/controller3/controller_server_jaas.conf:/opt/kafka/config/controller_server_jaas.conf
       - ./configs/kafka/controller3/jks/:/opt/kafka/config/jks/
-      - ./configs/kafka/controller3/oauthbearer-admin-client.properties:/opt/kafka/config/oauthbearer-admin-client.properties
+      - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
       # - ./logs/kafka/controller3/data:/opt/data/
       # - ./logs/kafka/controller3/logs:/opt/kafka/logs/
     networks:
       dahbest:
-        ipv4_address: 172.80.0.22
+        ipv4_address: 172.80.0.23
     dns:
       - 172.80.0.40
     dns_search:

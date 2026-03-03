@@ -54,7 +54,7 @@ for CLIENT_ID in $BROKER_CLIENT_ID $CONTROLLER_CLIENT_ID $KAFKA_ADMIN_CLIENT_ID;
       "standardFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "attributes": {
-        "access.token.lifespan": "1800"
+        "access.token.lifespan": '$TOKEN_LIFESPAN'
       }
     }' >/dev/null
 
@@ -64,7 +64,7 @@ for CLIENT_ID in $BROKER_CLIENT_ID $CONTROLLER_CLIENT_ID $KAFKA_ADMIN_CLIENT_ID;
 
   echo "  -> Client UUID: $CLIENT_UUID"
 
-  # 2. Create Protocol Mapper (If it already exists, Keycloak rejects it, so we suppress the error output)
+  # 2. Create Protocol Mapper
   curl -sk -X POST "https://localhost:8443/admin/realms/master/clients/$CLIENT_UUID/protocol-mappers/models" \
     -H "Authorization: Bearer $ADMIN_TOKEN" \
     -H "Content-Type: application/json" \

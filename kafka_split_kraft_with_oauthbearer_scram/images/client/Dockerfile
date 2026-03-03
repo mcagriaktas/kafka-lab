@@ -1,5 +1,7 @@
 FROM rockylinux:9.3
 
+ENV TZ=Europe/Istanbul
+
 WORKDIR /mnt
 RUN chmod 755 /mnt
 

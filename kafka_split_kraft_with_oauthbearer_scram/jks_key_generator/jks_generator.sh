@@ -19,7 +19,7 @@ ROOTS_DIR="roots_keys"
 # ----------------------------
 # Directory Setup
 # ----------------------------
-mkdir -p "$KEYS_DIR/client" "$ROOTS_DIR"
+mkdir -p "$KEYS_DIR/client" "$KEYS_DIR/keycloak" "$KEYS_DIR/kafka-ui" "$ROOTS_DIR"
 
 # ----------------------------
 # Root CA Generation

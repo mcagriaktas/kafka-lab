@@ -36,6 +36,6 @@ if [[ ! -f /opt/data/metadata/metadata.properties ]]; then
         --ignore-formatted
 fi
 
-sleep 10
+sleep 20
 
 /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/controller.properties

@@ -20,39 +20,15 @@ echo "kafka-ui user creating."
     
 echo ""
 
-echo "kafka-ui user's Topic ACLS."
+echo "kafka-ui user's ACLS."
 /opt/kafka/bin/kafka-acls.sh \
     --bootstrap-server "$BOOTSTRAP_SERVERS" \
     --command-config /opt/kafka/config/oauthbearer-admin-client.properties \
     --add \
     --allow-principal "User:kafkaui" \
-    --operation Read \
-    --operation Describe \
-    --operation DescribeConfigs \
-    --topic '*'
-
-echo ""
-
-echo "kafka-ui user's Group ACLS."
-/opt/kafka/bin/kafka-acls.sh \
-    --bootstrap-server "$BOOTSTRAP_SERVERS" \
-    --command-config /opt/kafka/config/oauthbearer-admin-client.properties \
-    --add \
-    --allow-principal "User:kafkaui" \
-    --operation Read \
-    --operation Describe \
-    --group '*'
-
-echo ""
-
-echo "kafka-ui user's Cluster ACLS."
-/opt/kafka/bin/kafka-acls.sh \
-    --bootstrap-server "$BOOTSTRAP_SERVERS" \
-    --command-config /opt/kafka/config/oauthbearer-admin-client.properties \
-    --add \
-    --allow-principal "User:kafkaui" \
-    --operation Describe \
-    --operation DescribeConfigs \
+    --operation All \
+    --topic '*' \
+    --group '*' \
     --cluster
 
 echo ""
