@@ -1,82 +1,56 @@
-# Securing a Split KRaft Kafka Architecture: Setting Up Kerberos and SCRAM Authentication
+# Securing a Split KRaft Kafka Architecture: Setting Up Oauthbarer and SCRAM Authentication
 
-container to local machine
+In this demo, the main aim is to implement a split KRaft Kafka Cluster with separate controller and broker components. When authentication is added to the *.properties files, the split architecture can cause confusion, which is why I've set up OAUTHBARER authentication between the controller and broker. Additionally, a client container is included that uses both Oauthbarer and SCRAM authentication with the broker. For a deeper understanding of configuration, properties files, and Oauthbarer/SCRAM authentication, refer to check all configs folder.
+
+---
+
+### 🛠️ Environment Setup
+| Software          | Description                                    | Version                             | UI - Ports      |
+|-------------------|------------------------------------------------|-------------------------------------|------------|
+| **WSL**           | Windows Subsystem for Linux environment        | Rockylinux 10 (Distro 2)             |            |
+| **Docker**        | Containerization platform                      | Docker version 27.2.0               |            |
+| **Docker Compose**| Tool for defining and running multi-container Docker applications | v2.29.2-desktop.2 |            |
+| **Apache Kafka**  | Distributed event streaming platform           | 4.2.0                                | 9092 (broker), 9093 (controller) 19092-29092-39092 (external) |
+| **KeyCloak**      | Network authentication protocol service        | 26.5.4                              | 8443 |
+| **Java**         | Programming language                           | 21 with Scala-Cli Compiler                          |            |
+
+---
+
+### How to create Oauthbarer Client-ID and Scram Users for Client:
+1. Check the `./add_users.sh` for Kafka Admin Manager.
 ```bash
-127.0.0.1 broker1.dahbest.kfn
-127.0.0.1 broker2.dahbest.kfn
-127.0.0.1 broker3.dahbest.kfn
-127.0.0.1 kerberos.dahbest.kfn
+╔════════════════════════════════════════════╗
+║       Kafka Cluster Manager (OAuth)        ║
+╚════════════════════════════════════════════╝
 
-127.0.0.1 kroxy.dahbest.kfn
-127.0.0.1 coredns
-127.0.0.1 haproxy.dahbest.kfn
+1) Create Topic
+2) List Topics
+3) Describe Topic
+4) Create SCRAM User
+5) Create OAuth Bearer User
+6) List SCRAM Users
+7) Add ACL
+8) List ACLs
+9) Add Consumer Group ACL
+10) Exit
 
-127.0.0.1 cluster-a.dahbest.kfn
-127.0.0.1 cluster-b.dahbest.kfn
-
-127.0.0.1 cluster-a-1.dahbest.kfn
-127.0.0.1 cluster-a-2.dahbest.kfn
-127.0.0.1 cluster-a-3.dahbest.kfn
-127.0.0.1 cluster-b-1.dahbest.kfn
-127.0.0.1 cluster-b-2.dahbest.kfn
-127.0.0.1 cluster-b-3.dahbest.kfn
+Choose [1-10]:
 ```
 
+2. Also when you want to compile a jar or write a new scrip, you can put your file in `/configs/client/scripts`
 
-```json
-DEBUG Completed request:{ 
-  "isForwarded":false,
-  "requestHeader":{
-    "requestApiKey":0,
-    "requestApiVersion":13,
-    "correlationId":283,
-    "clientId":"cagri-producer",
-    "requestApiKeyName":"PRODUCE"
-  },
-  "request":{
-    "transactionalId":null,
-    "acks":-1,
-    "timeoutMs":3000,
-    "topicData":[{
-      "topicId":"r3IRhpJiTnOM9i0B4tRT5g",
-      "partitionData":[{
-        "index":8,
-        "recordsSizeInBytes":115
-      }]
-    }]
-  },
-  "response":{
-    "responses":[
-        {
-        "topicId":"r3IRhpJiTnOM9i0B4tRT5g",
-        "partitionResponses":[
-          {"index":8,
-          "errorCode":0,
-          "baseOffset":72,
-          "logAppendTimeMs":-1,
-          "logStartOffset":0,
-          "recordErrors":[],
-          "errorMessage":null
-          }
-          ]
-        }],
-        "throttleTimeMs":0
-    },
-  "connection":"172.80.0.11:9092-172.80.0.43:52486-0-4",
-  "totalTimeMs":4.67,
-  "requestQueueTimeMs":0.118,
-  "localTimeMs":2.304,
-  "remoteTimeMs":2.109,
-  "throttleTimeMs":0,
-  "responseQueueTimeMs":0.031,
-  "sendTimeMs":0.106,
-  "securityProtocol":"SASL_SSL",
-  "principal":"User:kafka-admin",
-  "listener":"BROKER",
-  "clientInformation":{
-    "softwareName":"apache-kafka-java",
-    "softwareVersion":"4.2.0"
-    }
-} 
-  (kafka.request.logger)
+client volume:
+```bash
+      - ./configs/client:/mnt/home
 ```
+
+How to run client:
+```bash
+docker exec client scala-cli /mnt/scripts/producer.java
+docker exec client scala-cli /mnt/scripts/consumer.java
+```
+
+Note: 
+1. The producer.java client is already using the kafka-admin user, so you don’t need to create a new client ID. However, if you wish, of course, you can use `add_users.sh.`
+2. ⚠️ Check main README.md file for how to start projects.
+3. All metadata, data, and logs volumes are defined in the docker-compose.yaml. If you wish, you can uncommand the paths; the `logs` folder will be created automatically next to the docker-compose.yml file.

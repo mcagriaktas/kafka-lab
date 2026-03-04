@@ -45,8 +45,6 @@ public class producer {
                 "oauth.ssl.endpoint.identification.algorithm=\"\";";
         props.put(SaslConfigs.SASL_JAAS_CONFIG, jaasConfig);
 
-        props.put(ProducerConfig.ACKS_CONFIG, "all");
-
         return props;
     }
 

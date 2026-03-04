@@ -14,7 +14,7 @@ services:
       - ./configs/kafka/log4j2.yaml:/opt/kafka/config/log4j2.yaml
       - ./configs/kafka/broker1/jks/:/opt/kafka/config/jks/
       # - ./logs/kafka/broker1/data:/opt/data/
-      # - ./logs/kafka/broker1/logs:/opt/kafka/logs/
+      - ./logs/kafka/broker1/logs:/opt/kafka/logs/
     networks:
       dahbest:
         ipv4_address: 172.80.0.11

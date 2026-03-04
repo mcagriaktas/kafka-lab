@@ -104,7 +104,7 @@ Configuration:
         level: INFO
       # Kafka request logger
       - name: kafka.request.logger
-        level: DEBUG
+        level: WARN
         additivity: false
         AppenderRef:
           ref: RequestAppender
